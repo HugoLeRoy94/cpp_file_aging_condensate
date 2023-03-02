@@ -44,6 +44,7 @@ Monte_Carlo::Monte_Carlo(double ell_tot,
 Monte_Carlo::~Monte_Carlo()
 {
 
+
 }
 
 void Monte_Carlo::Evolve(bool* accepted, int* move_type, double* DE)
