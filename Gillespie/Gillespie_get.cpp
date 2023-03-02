@@ -1,4 +1,5 @@
-#include "Header.h"
+#include "../Shared_Objects/Header.h"
+#include "Gillespie.h"
 
 using namespace std;
 
