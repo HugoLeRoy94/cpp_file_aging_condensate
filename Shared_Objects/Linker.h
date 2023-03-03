@@ -20,8 +20,6 @@ class Linker
         void remove_strand(Strand* strand);
         std::set<Strand*,LessLoop> get_strands() const;
         void print_position(std::string sep)const;
-        static int counter;
-        static int dimension;
     
 };
 class map3dLink : public map3d<double,double,double,Linker*>

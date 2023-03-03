@@ -10,7 +10,7 @@ Strand* Accessor::clone(const Strand& strand_to_clone)
 {
     return strand_to_clone.clone();
 }
-LoopLinkWrap::LoopLinkWrap(){Nfree_linker=0.;}
+LoopLinkWrap::LoopLinkWrap(){Nfree_linker=0.;counter=0;}
 LoopLinkWrap::~LoopLinkWrap()
 {
     //delete_pointers();
@@ -94,6 +94,7 @@ void LoopLinkWrap::create_new_free_linker(double x,double y, double z)
 {
     linkers[{x,y,z}] = new Linker({x,y,z});
     Nfree_linker++;
+    counter++;
 }
 
 int LoopLinkWrap::get_N_free_linker() const
@@ -104,6 +105,7 @@ int LoopLinkWrap::get_N_free_linker() const
 void LoopLinkWrap::create_new_occupied_linker(double x, double y, double z)
 {
     Linker* link = new Linker({x,y,z});
+    counter++;
     link->set_bounded();
     linkers[{x,y,z}] = link;
 }
@@ -116,9 +118,30 @@ void LoopLinkWrap::delete_linkers()
     Nfree_linker = 0.;
     for(auto& linker : linkers){
         delete linker.second;
+        counter--;
     }
     map<array<double,3>,Linker*> newlinkers; // make a new empty map3d
     linkers = newlinkers;
+}
+void LoopLinkWrap::delete_free_linkers()
+{
+    // Simply delete all the free linkers pointers
+    IF(true){cout<<"LoopLinkWrap : delete the free linkers pointer"<<endl;}
+    // doesn t delete them from the strands objects
+    for(auto linker = linkers.begin(); linker!=linkers.end();)
+    {
+        if((*linker).second->is_free()){
+            delete (*linker).second;
+            counter--;
+            linker = linkers.erase(linker);
+            Nfree_linker--;
+        }
+        else{
+            ++linker;
+        }
+    }
+    //map<array<double,3>,Linker*> newlinkers; // make a new empty map3d
+    //linkers = newlinkers; 
 }
 
 map<array<double,3>,Linker*> const &LoopLinkWrap::get_linkers() const

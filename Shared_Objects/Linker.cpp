@@ -2,8 +2,8 @@
 
 using namespace std;
 
-Linker::Linker(std::array<double,3> r_c){R = r_c;free=true; Linker::counter++;}
-Linker::~Linker(){Linker::counter--;}
+Linker::Linker(std::array<double,3> r_c){R = r_c;free=true;}
+Linker::~Linker(){}
 
 array<double,3> Linker::r() const{
     if(LoopLinkWrap::dimension == 3){

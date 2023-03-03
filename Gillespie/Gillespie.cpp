@@ -15,7 +15,6 @@ Gillespie::Gillespie(double ell_tot, double rho0, double BindingEnergy,double k_
     slide=sliding;
     LoopLinkWrap::dimension=dimension;
     N_linker_max = Nlinker;
-    Linker::counter = 0;
     binding_energy = BindingEnergy;
     kdiff = k_diff;
     loop_link.create_new_occupied_linker(0.,0.,0.);
@@ -43,7 +42,6 @@ Gillespie::Gillespie(double ell_tot, double rho0, double BindingEnergy,double k_
 Gillespie::~Gillespie()
 {
   loop_link.delete_pointers();
-  Linker::counter = 0;
 }
 
 void Gillespie::compute_cum_rates(vector<double>& cum_rates) const
@@ -105,7 +103,8 @@ double Gillespie::evolve(int *bind)
   IF(true){cout<<"-------------------------------------------------"<<endl;}
   IF(true) { cout << "Gillespie : start evolve" << endl; }
   IF(true){cout<<"-------------------------------------------------"<<endl;}
-  //IF(true){check_loops_integrity();}
+  //IF(true){check_loops_integrity();}$
+  //IF(true){if(Linker::counter!=N_linker_max){exit(0);}}
   // -----------------------------------------------------------------------------
   // -----------------------------------------------------------------------------
   // compute the cumulative transition rates for each loop
@@ -264,6 +263,7 @@ void Gillespie::move_random_free_linkers()
   // check if the linker belong somewhere
   if(moved_linker->get_strands().size()==0){
     //remake a linker in the vicinity of one of the strand
+    //delete the moved strand:
     reset_crosslinkers();
   }
 }
@@ -307,7 +307,11 @@ void Gillespie::reset_crosslinkers()
   }
   // delete the linkers before
   // generate a bunch of free linkers
-  set<array<double,3>> free_linkers_to_remake(generate_crosslinkers(loop_link.get_N_free_linker()));
+  // delete the linkers before generating new ones. Otherwise the counter of linker forbids generating new linkers
+  //int N_free_linker(loop_link.get_N_free_linker());
+  loop_link.delete_free_linkers(); 
+  set<array<double,3>> free_linkers_to_remake(generate_crosslinkers(true));
+  
   IF(true){cout<<"Number of free linkers to remake : "<<free_linkers_to_remake.size()<<endl;}
   // new create the associated linkers. carefull, they are free !
   for(auto& linker : free_linkers_to_remake){
@@ -316,7 +320,7 @@ void Gillespie::reset_crosslinkers()
   // set all the crosslinker into the linker_to_strand
   // which also add the bound extremities
   reset_loops(new_loop_link);
-  loop_link.delete_linkers();
+   loop_link.delete_linkers();
   loop_link = new_loop_link;
   IF(true){check_loops_integrity();}
 }
@@ -374,41 +378,60 @@ set<array<double,3>> Gillespie::generate_crosslinkers(bool remake){
   // if we generate a fixed number of linkers
   if(N_linker_max>0)
     {
-      Linker::counter = loop_link.get_linker_size()-loop_link.get_N_free_linker();// number of occupied linkers      
-      N_linker_to_make = N_linker_max-Linker::counter; // total number of linkers that has to be added
+      IF(true){cout<<"linker counter : "<<loop_link.counter<<endl;}
+      //Linker::counter = loop_link.get_linker_size()-loop_link.get_N_free_linker();// number of occupied linkers      
+      N_linker_to_make = N_linker_max - loop_link.counter;
+      IF(true){cout<<"N_linker_to_make : "<<N_linker_to_make<<endl;}
       //cout<<"counter : "<<Linker::counter<<endl;
       //cout<<"N_linker_max :"<<N_linker_max<<endl;      
       // compute the probability to place N linkers propto the volume of each strands
       double total_volume(0.);
       for(auto& strand : loop_link.get_strands()){total_volume+=strand->get_V();}
+      IF(true){cout<<"total volume = "<<total_volume<<endl;}
+      vector<double> cum_Ploop(loop_link.get_strands().size(),0);
+      double cumSum(0);
+      int n(0);
       for(auto& strand : loop_link.get_strands())
       {
+        cumSum+=strand->get_V()/total_volume;
+        cum_Ploop[n]=cumSum;
+        n++;
+      }
+    for(int i =0;i<N_linker_to_make;i++){
+        // select the loop in which we will create a linker:
+        uniform_real_distribution<double> distribution(0, cum_Ploop.back());
+        double pick_rate = distribution(generator);
+        // becareful : if the rate_selec number is higher than cum_rates.back()  lower_bound returns cum_rates.back()
+        vector<double>::iterator strand_selec = lower_bound(cum_Ploop.begin(), cum_Ploop.end(), pick_rate);
+        //set<Strand*,LessLoop>::iterator strand(loop_link.get_strand(distance(cum_Ploop.begin(),strand_selec)));
+        Strand* strand(*(loop_link.get_strand(distance(cum_Ploop.begin(),strand_selec))));
+        
+        // now generate one linker in this loop
         double a,b;
         array<double,3> ctr_mass,main_ax;
         // number of linker to add to this specific strand
-        int Nlinkers_strand(round(strand->get_V()/total_volume * N_linker_to_make));
-        //cout<<strand->get_V()/total_volume * N_linker_to_make<<endl;
+        //int Nlinkers_strand(round(strand->get_V()/total_volume * N_linker_to_make));
         //cout<<Nlinkers_strand<<endl;
         strand->get_volume_limit(main_ax,ctr_mass,a,b);
-        generate_point_in_ellipse(main_ax,ctr_mass,a,b,res,Nlinkers_strand);
+        generate_point_in_ellipse(main_ax,ctr_mass,a,b,res,1);
       }
     }
   else
-  {
-  for(auto & strand : loop_link.get_strands())
-  {
-    double a,b;
-    array<double,3> ctr_mass,main_ax;
-    poisson_distribution<int> distribution(rho * strand->get_V());
-    cout<<"volume of the strand "<<strand->get_V()<<endl;
-    
-    if(remake){N_linker_to_make =N_linker_to_make = max(0.,distribution(generator)-(double)strand->get_occ_r().size());}
-    else{N_linker_to_make = max(0.,distribution(generator)-(double)strand->get_r().size()-(double)strand->get_occ_r().size());}
-    
-    strand->get_volume_limit(main_ax,ctr_mass,a,b);
-    generate_point_in_ellipse(main_ax,ctr_mass,a,b,res,N_linker_to_make);
-  }
-  }
+    {
+      for(auto & strand : loop_link.get_strands())
+      {
+        double a,b;
+        array<double,3> ctr_mass,main_ax;
+        poisson_distribution<int> distribution(rho * strand->get_V());
+        cout<<"volume of the strand "<<strand->get_V()<<endl;
+        
+        if(remake){N_linker_to_make =N_linker_to_make = max(0.,distribution(generator)-(double)strand->get_occ_r().size());}
+        else{N_linker_to_make = max(0.,distribution(generator)-(double)strand->get_r().size()-(double)strand->get_occ_r().size());}
+        
+        strand->get_volume_limit(main_ax,ctr_mass,a,b);
+        generate_point_in_ellipse(main_ax,ctr_mass,a,b,res,N_linker_to_make);
+      }
+    }
   // transform res depending on the dimension
   set<array<double,3>> dimensional_res;
   if (LoopLinkWrap::dimension == 2){for(auto& xyz: res){dimensional_res.insert({xyz[0],xyz[1],0.});}}

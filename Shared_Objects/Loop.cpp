@@ -1,6 +1,6 @@
 #include "Header.h"
 using namespace std;
-int Linker::counter = 0.;
+//int Linker::counter = 0.;
 Loop::Loop(Linker* R0,
            Linker* R1,
            double ell_0,
@@ -96,7 +96,7 @@ void Loop::get_volume_limit(array<double,3>& main_ax,
                             array<double,3>& ctr_mass,
                             double& a_in, double& b_in) const
 {
-  IF(true){cout<<"loop : get_volume_limit"<<endl;}
+  //IF(true){cout<<"loop : get_volume_limit"<<endl;}
   ctr_mass = {xg,yg,zg};
   //a = norm(Minus(Rleft->r(),Rright->r()))*0.5;
   //b = sqrt(ell/2);

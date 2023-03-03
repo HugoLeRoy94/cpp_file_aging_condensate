@@ -42,10 +42,12 @@ Gillespie.so:$(LIB_OBJSGIL)
 Monte_Carlo.so:$(LIB_OBJSMC)
 	$(CC) $(OPT) -shared -Wl,-soname,$@ -o $@ $(LIB_OBJSMC) $(FLAG)
 
-.PHONY: clean EXEC
+.PHONY: clean Gillespie_Exec Monte_Carlo_Exec
 
 clean:
 	rm -rf $(foreach dir, $(LIB_INCLUDE_DIRS), $(dir)/*.o) *~ $(LIB_SO)
 
-EXEC: $(LIB_OBJS)
-	$(foreach lib, $(LIB_NAMES), $(CC) $(OPT) $(LIB_OBJS) $(lib)/$(lib).o -o $(lib).so $(FLAG) $(MEMCHECK);)
+Gillespie_Exec: $(LIB_OBJSGIL) main.o
+	$(CC) $(OPT) $(LIB_OBJSGIL) main.o -o Gillespie_Exec $(FLAG) $(MEMCHECK)
+Monte_Carlo_Exec: $(LIB_OBJSMC)
+	$(CC) $(OPT) $(LIB_OBJSMC) $(lib)/$(lib).o -o $(lib).so $(FLAG) $(MEMCHECK)

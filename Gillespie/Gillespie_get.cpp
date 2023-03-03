@@ -132,10 +132,9 @@ void Gillespie::check_loops_integrity()
     }
   }
   // check that the linker of every strand own the given strand
-  cout<<"adresses of the loops :"<<endl;
   for(auto& loop:loop_link.get_strands())
   {
-    cout<<loop<<endl;
+    //cout<<loop<<endl;
     for(auto& linker : loop->get_r())
     {
       if(linker->get_strands().find(loop)==linker->get_strands().end())

@@ -7,7 +7,7 @@ Strand::Strand(Linker* R0,
             double rho,
             bool sliding)
 {
-  IF(true) { cout << "Strand : creator" << endl; }
+  //IF(true) { cout << "Strand : creator" << endl; }
   // generator.seed(seed);
   //  the right anchoring point of the strand
   Rleft = R0;

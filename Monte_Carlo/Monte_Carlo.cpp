@@ -20,7 +20,6 @@ Monte_Carlo::Monte_Carlo(double ell_tot,
     slide = false;
     LoopLinkWrap::dimension=dimension;
     Nlinker= Nlinker_max;
-    Linker::counter = 0;
     binding_energy = BindingEnergy;
     loop_link.create_new_occupied_linker(0.,0.,0.);
     Linker* R0 = loop_link.get_linkers().at({0.,0.,0.});
@@ -65,8 +64,10 @@ set<array<double,3>> Monte_Carlo::generate_crosslinkers(bool remake){
   // if we generate a fixed number of linkers
   if(Nlinker>0)
     {
-      Linker::counter = loop_link.get_linker_size()-loop_link.get_N_free_linker();// number of occupied linkers      
-      N_linker_to_make = Nlinker-Linker::counter; // total number of linkers that has to be added
+      //Linker::counter = loop_link.get_linker_size()-loop_link.get_N_free_linker();// number of occupied linkers      
+      //N_linker_to_make = Nlinker-Linker::counter; // total number of linkers that has to be added
+      
+      
       //cout<<"counter : "<<Linker::counter<<endl;
       //cout<<"N_linker_max :"<<N_linker_max<<endl;      
       // compute the probability to place N linkers propto the volume of each strands

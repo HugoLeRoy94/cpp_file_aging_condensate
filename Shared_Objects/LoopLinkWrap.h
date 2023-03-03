@@ -56,6 +56,7 @@ class LoopLinkWrap
         void create_new_occupied_linker(double x,double y,double z);
                 
         void delete_linkers();
+        void delete_free_linkers();
         
         int get_linker_size() const;
         
@@ -74,6 +75,8 @@ class LoopLinkWrap
         void remake_strands(std::set<Strand*,LessLoop> to_remake);
 
         void delete_pointers();
+
+        int counter;
 };
 class Accessor
 {
