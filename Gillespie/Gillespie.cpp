@@ -3,7 +3,14 @@
 
 using namespace std;
 
-Gillespie::Gillespie(double ell_tot, double rho0, double BindingEnergy,double k_diff, int seed,bool sliding, int Nlinker,int dimension) : distrib(1, 10000000)
+Gillespie::Gillespie(double ell_tot, 
+                    double rho0, 
+                    double BindingEnergy,
+                    double k_diff, 
+                    int seed,
+                    bool sliding, 
+                    int Nlinker,
+                    int dimension) : distrib(1, 10000000),loop_link(dimension)
 {
     IF(true) { cout << "Gillespie : creator" << endl; }
     // srand(seed);
@@ -13,7 +20,6 @@ Gillespie::Gillespie(double ell_tot, double rho0, double BindingEnergy,double k_
     ell = ell_tot;
     rho = rho0;
     slide=sliding;
-    LoopLinkWrap::dimension=dimension;
     N_linker_max = Nlinker;
     binding_energy = BindingEnergy;
     kdiff = k_diff;
@@ -294,7 +300,7 @@ void Gillespie::reset_crosslinkers()
   IF(true){cout<<"reset all the crosslinkers"<<endl;}
   IF(true){cout<<"------------------------------------------------------"<<endl;}
   IF(true){check_loops_integrity();}
-  LoopLinkWrap new_loop_link;
+  LoopLinkWrap new_loop_link(loop_link.g_dim());
   // create a new set of occupied crosslinkers
   set<array<double,3>> occ_linkers_to_remake;
   // save the occupied linkers that stay
@@ -320,8 +326,8 @@ void Gillespie::reset_crosslinkers()
   // set all the crosslinker into the linker_to_strand
   // which also add the bound extremities
   reset_loops(new_loop_link);
-   loop_link.delete_linkers();
-  loop_link = new_loop_link;
+  loop_link.delete_linkers();
+  loop_link = move(new_loop_link);
   IF(true){check_loops_integrity();}
 }
 /*
@@ -434,8 +440,8 @@ set<array<double,3>> Gillespie::generate_crosslinkers(bool remake){
     }
   // transform res depending on the dimension
   set<array<double,3>> dimensional_res;
-  if (LoopLinkWrap::dimension == 2){for(auto& xyz: res){dimensional_res.insert({xyz[0],xyz[1],0.});}}
-  else if(LoopLinkWrap::dimension==1){for(auto& xyz: res){dimensional_res.insert({xyz[0],0.,0.});}}
+  if (loop_link.g_dim() == 2){for(auto& xyz: res){dimensional_res.insert({xyz[0],xyz[1],0.});}}
+  else if(loop_link.g_dim()==1){for(auto& xyz: res){dimensional_res.insert({xyz[0],0.,0.});}}
   else{return res;}
   return dimensional_res;
 }

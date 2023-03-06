@@ -8,7 +8,7 @@ Monte_Carlo::Monte_Carlo(double ell_tot,
                         double k_diff, 
                         int seed, 
                         int Nlinker_max,
-                        int dimension) : distrib(1, 10000000)
+                        int dimension) : distrib(1, 10000000),loop_link(dimension)
 {
     IF(true) { cout << "MC : creator" << endl; }
     // srand(seed);
@@ -18,7 +18,6 @@ Monte_Carlo::Monte_Carlo(double ell_tot,
     ell = ell_tot;
     rho =0.;
     slide = false;
-    LoopLinkWrap::dimension=dimension;
     Nlinker= Nlinker_max;
     binding_energy = BindingEnergy;
     loop_link.create_new_occupied_linker(0.,0.,0.);
@@ -103,8 +102,8 @@ set<array<double,3>> Monte_Carlo::generate_crosslinkers(bool remake){
   }
   // transform res depending on the dimension
   set<array<double,3>> dimensional_res;
-  if (LoopLinkWrap::dimension == 2){for(auto& xyz: res){dimensional_res.insert({xyz[0],xyz[1],0.});}}
-  else if(LoopLinkWrap::dimension==1){for(auto& xyz: res){dimensional_res.insert({xyz[0],0.,0.});}}
+  if (loop_link.g_dim() == 2){for(auto& xyz: res){dimensional_res.insert({xyz[0],xyz[1],0.});}}
+  else if(loop_link.g_dim()==1){for(auto& xyz: res){dimensional_res.insert({xyz[0],0.,0.});}}
   else{return res;}
   return dimensional_res;
 }

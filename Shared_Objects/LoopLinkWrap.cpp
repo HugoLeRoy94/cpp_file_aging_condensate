@@ -10,7 +10,8 @@ Strand* Accessor::clone(const Strand& strand_to_clone)
 {
     return strand_to_clone.clone();
 }
-LoopLinkWrap::LoopLinkWrap(){Nfree_linker=0.;counter=0;}
+LoopLinkWrap::LoopLinkWrap(int dim):dimension(dim){Nfree_linker=0.;counter=0;}
+int LoopLinkWrap::g_dim() const{return dimension;}
 LoopLinkWrap::~LoopLinkWrap()
 {
     //delete_pointers();
@@ -92,7 +93,7 @@ void LoopLinkWrap::set_occupied(Linker* link)
 
 void LoopLinkWrap::create_new_free_linker(double x,double y, double z)
 {
-    linkers[{x,y,z}] = new Linker({x,y,z});
+    linkers[{x,y,z}] = new Linker({x,y,z},dimension);
     Nfree_linker++;
     counter++;
 }
@@ -104,7 +105,7 @@ int LoopLinkWrap::get_N_free_linker() const
 
 void LoopLinkWrap::create_new_occupied_linker(double x, double y, double z)
 {
-    Linker* link = new Linker({x,y,z});
+    Linker* link = new Linker({x,y,z},dimension);
     counter++;
     link->set_bounded();
     linkers[{x,y,z}] = link;

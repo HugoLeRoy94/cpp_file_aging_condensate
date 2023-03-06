@@ -2,16 +2,16 @@
 
 using namespace std;
 
-Linker::Linker(std::array<double,3> r_c){R = r_c;free=true;}
+Linker::Linker(std::array<double,3> r_c,int dim){R = r_c;free=true;dimension=dim;}
 Linker::~Linker(){}
 
 array<double,3> Linker::r() const{
-    if(LoopLinkWrap::dimension == 3){
+    if(dimension == 3){
         return R;}
-    else if(LoopLinkWrap::dimension == 2){
+    else if(dimension == 2){
         return {R[0],R[1],0.};
     }
-    else if(LoopLinkWrap::dimension == 1){
+    else if(dimension == 1){
         return {R[0],0.,0.};
     }
     else{throw invalid_argument("invalid dimension value");}

@@ -3,7 +3,7 @@
 //class LoopLinkWrap;
 class LoopLinkWrap
 {
-    private:
+    private:        
         std::map<std::array<double,3>,Linker*> linkers;
         std::set<Strand*,LessLoop> strands;
         int Nfree_linker;
@@ -15,10 +15,11 @@ class LoopLinkWrap
                                 double b,
                                 std::vector<Linker*>& free_linkers,
                                 std::vector<Linker*>& occ_linkers) const;
+        int dimension;
     public:
-        inline static int dimension;
-        LoopLinkWrap();
+        LoopLinkWrap(int dim);
         ~LoopLinkWrap();
+        int g_dim() const;
         /*
             (~_|_ _ _  _  _| _
             _) | | (_|| |(_|_\                                                              
