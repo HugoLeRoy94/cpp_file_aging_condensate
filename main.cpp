@@ -2,24 +2,24 @@
 #include "Gillespie/Gillespie.h"
 using namespace std;
 int main(int argc, char* argv[]){
-  int t_tot(1000000);
+  int t_tot(100000);
   double ell_tot(100.);
   //double distance_anchor(1000.);
   double rho0(pow(10,-2));
   double BindingEnergy(-10);
   int bind(0.);
   double* R;
-  Gillespie* S = new Gillespie(ell_tot,rho0,BindingEnergy,0.000207352*5,19880,false,3,1);
+  Gillespie* S = new Gillespie(ell_tot,rho0,BindingEnergy,0.000207352*5,19880,false,20,1);
   for(int n(0);n<t_tot;n++){
   //cout<<n<<endl;
   double time(S->evolve(&bind));
   //S->reset_crosslinkers();
-  if(S->get_r_gillespie_size() != 9)
-  { 
-    cout<<S->get_r_gillespie_size()<<endl;
-    cout<<n<<endl;
-    exit(0);
-  }
+  //if(S->get_r_gillespie_size() != 9)
+  //{ 
+  //  cout<<S->get_r_gillespie_size()<<endl;
+  //  cout<<n<<endl;
+  //  exit(0);
+  //}
   }
   delete S;
   //set<array<double,3>> res;

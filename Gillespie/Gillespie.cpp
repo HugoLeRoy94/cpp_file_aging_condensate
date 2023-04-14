@@ -69,7 +69,6 @@ void Gillespie::compute_cum_rates(vector<double>& cum_rates) const
       it!=prev(loop_link.get_strands().end());
       it++)
   {    
-
     auto next_strand = next(it);
     cum_rates[n] = cum_rates[n - 1] + get_slide_rate(*it,*next_strand,1)+//slide right
                                       get_slide_rate(*it,*next_strand,-1);//slide left

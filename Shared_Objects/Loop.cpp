@@ -33,7 +33,8 @@ Loop::Loop(Linker* R0,
   else
   {
     //V = Pi / 6 * diff(Rleft, Rright)*1.5 * ell*2;
-    a = norm(Minus(Rleft->r(), Rright->r()))/2.;
+     // we let the polymer diffuse a little longer than the strict extremities
+    a = norm(Minus(Rleft->r(), Rright->r()))/2.+sqrt(ell/2.);
     b = sqrt(ell/2.);
     V = 4/3*Pi*a*b*b;
   }

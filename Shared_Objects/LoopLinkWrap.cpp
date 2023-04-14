@@ -25,7 +25,10 @@ void LoopLinkWrap::set_p_linkers(Strand* newly_created_strand)
   double a,b;
   newly_created_strand->get_volume_limit(main_ax,ctr_mass,a,b);
   // select the linkers in the vicinity
-  std::vector<Linker*> free_linkers,occ_linkers;
+  std::vector<Linker*> free_linkers;
+  free_linkers.reserve(get_N_free_linker());
+  std::vector<Linker*> occ_linkers;
+  occ_linkers.reserve(get_linker_size()-get_N_free_linker());
   IF(true){cout<<"Strand : slice"<<endl;}
   get_in_ellipse(ctr_mass,main_ax,a,b,free_linkers,occ_linkers);
   // tell the linkers that this strand is around
@@ -233,15 +236,24 @@ void LoopLinkWrap::get_in_ellipse(  std::array<double,3> ctr_mass,
                                     std::vector<Linker*>& free_linkers,
                                     std::vector<Linker*>& occ_linkers)const
 {
+    double theta = atan2(main_ax[1],main_ax[0]);
+    array<array<double,3>,3> OmZ(OmegaZ(-theta));
+    double phi = atan2(sqrt(pow(main_ax[0],2)+pow(main_ax[1],2)),main_ax[2])-acos(-1)/2;
+    array<array<double,3>,3> OmY(OmegaY(-phi));
+
+    
+    array<double,3> r;
     for(auto& linker: linkers)
     {  
-        array<double,3> r(rotate_point(linker.second->r(),main_ax,ctr_mass));
+        r = dot(OmY,dot(OmZ,Minus(linker.second->r(),ctr_mass)));
         if(pow(r[0]/a,2)+pow(r[1]/b,2)+pow(r[2]/b,2) <= 1)
         {
             if(linker.second->is_free()){
-                free_linkers.push_back(linker.second);}
+                free_linkers.push_back(linker.second);
+                }
             else{
-                occ_linkers.push_back(linker.second);}
+                occ_linkers.push_back(linker.second);
+                }
         }
     }
 }

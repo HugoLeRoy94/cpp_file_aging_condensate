@@ -7,6 +7,9 @@ extern std::array<double,3> anchor;
 double get_square_diff(std::array<double,3> v1,std::array<double,3> v2);
 double diff(std::array<double,3> v1,std::array<double,3> v2);
 
+void sph2cart(double r, double theta, double phi, double& x, double& y, double& z);
+void cart2sph(double x, double y, double z, double& r, double& theta, double& phi);
+
 std::array<double,3> dot(std::array<std::array<double,3>,3> Matrice,std::array<double,3> vect);
 std::array<std::array<double,3>,3> OmegaY(double theta);
 std::array<std::array<double,3>,3> OmegaZ(double theta);
@@ -20,9 +23,6 @@ void generate_point_in_ellipse(std::array<double,3> main_ax,
                                double b,
                                std::set<std::array<double,3>>& res,
                                int N_linker);
-std::array<double,3> rotate_point(std::array<double,3> pts, 
-                                  std::array<double,3> main_ax,
-                                  std::array<double,3> ctr_mass);
 struct {
         bool operator()(std::array<double,3> a, std::array<double,3> b) const { return a[0] < b[0]; }
     } customLess;

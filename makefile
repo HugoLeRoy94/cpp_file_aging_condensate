@@ -3,7 +3,7 @@ CC = g++
 VERSION = -std=c++23
 OPT = -O3
 DEBUG ?= no
-MEMCHECK ?=
+MEMCHECK = #-g
 
 # Libraries settings
 LIB_NAMES := Gillespie Monte_Carlo

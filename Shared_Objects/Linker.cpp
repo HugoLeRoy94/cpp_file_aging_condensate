@@ -39,12 +39,15 @@ void Linker::diffuse()
 {
     // chose a direction to make the move.
     normal_distribution<double> distribution(0.,1.);
-    double dx(distribution(generator));
-    double dy(distribution(generator));
-    double dz(distribution(generator));
-    double norm = sqrt(dx*dx+dy*dy+dz*dz);
-    R[0]+=dx/norm;
-    R[1]+=dy/norm;
-    R[2]+=dz/norm;
-
+    double dx(distribution(generator)); //generate a diffusion vector
+    double dy(distribution(generator)); //generate a diffusion vector
+    double dz(distribution(generator)); //generate a diffusion vector
+    double norm = sqrt(dx*dx+dy*dy+dz*dz); // compute its norm
+    //double x,y,z; // cartesian coordinate of the linker
+    //sph2cart(R[0],R[1],R[2],x,y,z); // convert the spherical to cartesian
+    R[0]+=dx/norm; // add the diffusion vector
+    R[1]+=dy/norm; // add the diffusion vector
+    R[2]+=dz/norm; // add the diffusion vector
+    //cart2sph(x,y,z,R[0],R[1],R[2]); // con
 }
+

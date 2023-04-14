@@ -114,7 +114,6 @@ void generate_point_in_ellipse( array<double,3> main_ax,
   double phi = atan2(sqrt(pow(main_ax[0],2)+pow(main_ax[1],2)),main_ax[2])-acos(-1)/2;
 
   array<array<double,3>,3> OmY(OmegaY(phi));
-
   uniform_real_distribution<double> Phis(0.,2.*acos(-1.));
   uniform_real_distribution<double> CosTheta(-1.,1.);
   uniform_real_distribution<double> R(0.,1.);
@@ -136,22 +135,18 @@ void generate_point_in_ellipse( array<double,3> main_ax,
   //file.open("trash.txt",std::ios::app);
   //for(auto& pts : res){file<<pts[0]<<" "<<pts[1]<<" "<<pts[2]<<endl;}
 }
-array<double,3> rotate_point(array<double,3> pts, 
-                             array<double,3> main_ax,
-                             array<double,3> ctr_mass)
+
+void sph2cart(double r, double theta, double phi, double& x, double& y, double& z)
 {
-  //double n(norm(main_ax));
-  //if(n!=0){
-  //  for(int i=0;i<3;i++){
-  //    main_ax[i] = main_ax[i]/n;}
-  //}
-  double theta = atan2(main_ax[1],main_ax[0]);
-  
-  array<array<double,3>,3> OmZ(OmegaZ(-theta));
-  
-  double phi = atan2(sqrt(pow(main_ax[0],2)+pow(main_ax[1],2)),main_ax[2])-acos(-1)/2;
+    x = r * sin(theta) * cos(phi);
+    y = r * sin(theta) * sin(phi);
+    z = r * cos(theta);
+}
 
-  array<array<double,3>,3> OmY(OmegaY(-phi));
-
-  return dot(OmY,dot(OmZ,Minus(pts,ctr_mass)));
+// Convert Cartesian coordinates to spherical coordinates
+void cart2sph(double x, double y, double z, double& r, double& theta, double& phi)
+{
+    r = sqrt(x*x + y*y + z*z);
+    theta = acos(z / r);
+    phi = atan2(y, x);
 }
