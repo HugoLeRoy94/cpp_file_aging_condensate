@@ -25,6 +25,11 @@ extern "C"
     gillespie->get_ell(ell,size);
   }
   
+  double get_S(void* ptr){
+    Gillespie* gillespie = reinterpret_cast<Gillespie*>(ptr);
+    return gillespie->get_S();
+  }
+
   double get_F(void* ptr){
     Gillespie* gillespie = reinterpret_cast<Gillespie*>(ptr);
     return gillespie->get_F();

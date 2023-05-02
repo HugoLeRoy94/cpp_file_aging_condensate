@@ -168,7 +168,7 @@ double Loop::get_ell_coordinate_1() const { return ell_coordinate_1; }
 
 double Loop::get_S(double dl) const
 {
-  return log(pow(3 / (2 * Pi * (ell+dl)), 1.5)) - 3 / 2 * get_square_diff(Rleft->r(), Rright->r()) / (ell+dl);
+  return 1.5*(log(3 / (2 * Pi * (ell+dl))) -  get_square_diff(Rleft->r(), Rright->r()) / (ell+dl))+ell*log(4*Pi);
 }
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------

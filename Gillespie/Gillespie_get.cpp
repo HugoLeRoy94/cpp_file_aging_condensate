@@ -81,6 +81,17 @@ int Gillespie::get_r_size() const
   return 3 * size;
 }
 
+double Gillespie::get_S() const
+{
+  double S(0);
+  for (auto &it : loop_link.get_strands())
+  {
+    S += - it->get_S();
+  }
+  S+=ell *log(4*Pi);
+  return S;
+}
+
 double Gillespie::get_F() const
 {
   double F(get_N_strand()*binding_energy);
@@ -88,6 +99,7 @@ double Gillespie::get_F() const
   {
     F += - it->get_S();
   }
+  F+=ell *log(4*Pi);
   return F;
 }
 
