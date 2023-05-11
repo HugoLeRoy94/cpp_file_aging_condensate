@@ -120,18 +120,33 @@ pair<unique_ptr<Strand>,unique_ptr<Strand>> Loop::bind() const
   unique_ptr<Loop> right_loop = make_unique<Loop>(linker_selected,Rright,ell_coordinate_0+length,ell_coordinate_1,rho0,slide);
   return  {move(left_loop),move(right_loop)};
 }
-unique_ptr<Strand> Loop::unbind_from(Strand* left_strand) const
+std::unique_ptr<Strand> Loop::unbind_from(Strand* left_strand) const
 {
-  // return a reference to the loop that must be created when
-  // unbinding a linker between the current loop (at its right)
-  // and "left_loop" that is at its left.
-  return make_unique<Loop>(left_strand->get_Rleft(),
-                          Rright,
-                          left_strand->get_ell_coordinate_0(),
-                          ell_coordinate_1,
-                          rho0,
-                          slide);
+  IF(true){cout<<"unbind from loop"<<endl;}
+    Dangling* dangling_strand = dynamic_cast<Dangling*>(left_strand);
+    if (dangling_strand != nullptr) {
+        // The pointer is a Dangling*
+        return std::make_unique<Dangling>(
+            Rright,                            
+            ell_coordinate_1,
+            ell + left_strand->get_ell(),
+            rho0,
+            slide,
+            dangling_strand->get_left()
+        );
+    } else {
+        // The pointer is not a Dangling*
+        return std::make_unique<Loop>(
+            left_strand->get_Rleft(),
+            Rright,
+            left_strand->get_ell_coordinate_0(),
+            ell_coordinate_1,
+            rho0,
+            slide
+        );
+    }
 }
+
 unique_ptr<Strand> Loop::do_slide(double dl,bool right) const
 {
   // simply add dl to the right linker if right otherwise add dl to the left one

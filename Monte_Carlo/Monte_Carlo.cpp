@@ -22,7 +22,7 @@ Monte_Carlo::Monte_Carlo(double ell_tot,
     binding_energy = BindingEnergy;
     loop_link.create_new_occupied_linker(0.,0.,0.);
     Linker* R0 = loop_link.get_linkers().at({0.,0.,0.});
-    Dangling dummy_dangling(R0, 0., ell, rho,slide); // dummy dangling that helps generate crosslinkers but has none initially
+    Dangling dummy_dangling(R0, 0., ell, rho,slide,false); // dummy dangling that helps generate crosslinkers but has none initially
     Strand* dummy_strand(loop_link.Create_Strand(dummy_dangling));
     // ---------------------------------------------------------------------------
     //-----------------------------initialize crosslinkers------------------------
@@ -36,7 +36,7 @@ Monte_Carlo::Monte_Carlo(double ell_tot,
     // ---------------------------------------------------------------------------
     //-----------------------------initialize dangling----------------------------
     IF(true){cout<< "MC : create dangling" << endl;}
-    loop_link.Create_Strand(Dangling(R0, 0., ell, rho,slide));
+    loop_link.Create_Strand(Dangling(R0, 0., ell, rho,slide,false));
     IF(true) { cout << "MC : created" << endl; }
 }
 Monte_Carlo::~Monte_Carlo()

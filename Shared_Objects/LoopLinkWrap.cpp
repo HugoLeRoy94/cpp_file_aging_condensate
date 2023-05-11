@@ -6,6 +6,7 @@ void Accessor::compute_rates(Strand* strand_to_compute_rates)
 {
     strand_to_compute_rates->compute_total_rates();
 }
+
 Strand* Accessor::clone(const Strand& strand_to_clone)
 {
     return strand_to_clone.clone();

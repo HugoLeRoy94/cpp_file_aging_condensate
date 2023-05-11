@@ -25,12 +25,11 @@ Gillespie::Gillespie(double ell_tot,
     kdiff = k_diff;
     loop_link.create_new_occupied_linker(0.,0.,0.);
     Linker* R0 = loop_link.get_linkers().at({0.,0.,0.});
-    Dangling dummy_dangling(R0, 0., ell, rho,slide); // dummy dangling that helps generate crosslinkers but has none initially
+    Dangling dummy_dangling(R0, 0., ell, rho,slide,false); // dummy dangling that helps generate crosslinkers but has none initially
     Strand* dummy_strand(loop_link.Create_Strand(dummy_dangling));
     // ---------------------------------------------------------------------------
     //-----------------------------initialize crosslinkers------------------------
     set<array<double,3>> linkers(generate_crosslinkers(0));
-  
     for(auto& linker : linkers)
     {
       loop_link.create_new_free_linker(linker.at(0),linker.at(1),linker.at(2));// the linker is free by default
@@ -39,7 +38,8 @@ Gillespie::Gillespie(double ell_tot,
     // ---------------------------------------------------------------------------
     //-----------------------------initialize dangling----------------------------
     IF(true){cout<< "Gillespie : create dangling" << endl;}
-    loop_link.Create_Strand(Dangling(R0, 0., ell, rho,slide));
+    loop_link.Create_Strand(Dangling(R0, ell/2, ell/2, rho,slide,true));
+    loop_link.Create_Strand(Dangling(R0,ell/2, ell/2, rho,slide,false));
     //print_random_stuff();
     //for(auto& it : linker_to_strand){for(auto& it2 : it.second){cout<<it2->get_Rleft()[0]<<" "<<it2->get_Rleft()[1]<<" "<<it2->get_Rleft()[2]<<endl;}}
     IF(true) { cout << "Gillespie : created" << endl; }
@@ -52,39 +52,34 @@ Gillespie::~Gillespie()
 
 void Gillespie::compute_cum_rates(vector<double>& cum_rates) const
 {
-  IF(true) { cout << "Gillespie : Start computing the cumulative probability array" << endl; }
-  cum_rates[0] = (loop_link.get_strand_size()-1)  * exp(binding_energy);
-  cum_rates[1] = kdiff*loop_link.get_N_free_linker()+cum_rates[0];
-  int n(2);
-  for (auto &it : loop_link.get_strands())
-  {
-    cum_rates[n] = cum_rates[n - 1] + it->get_total_binding_rates();
+  IF(true) cout << "Gillespie : Start computing the cumulative probability array" << endl;
+
+  cum_rates[0] = (loop_link.get_strand_size() - 2) * exp(binding_energy);
+  cum_rates[1] = kdiff * loop_link.get_N_free_linker() + cum_rates[0];
+
+  int n = 2;
+  for (const auto &strand : loop_link.get_strands()) {
+    cum_rates[n] = cum_rates[n - 1] + strand->get_total_binding_rates();
     n++;
   }
-  if(slide)
-  {
-  // iterate over each loop and the next one (skip the last)
-  //-------------------------------------------------------------------
-  for(set<Strand*>::iterator it = loop_link.get_strands().begin();
-      it!=prev(loop_link.get_strands().end());
-      it++)
-  {    
-    auto next_strand = next(it);
-    cum_rates[n] = cum_rates[n - 1] + get_slide_rate(*it,*next_strand,1)+//slide right
-                                      get_slide_rate(*it,*next_strand,-1);//slide left
-    n++;
+
+  if(slide) {
+    for(auto it = loop_link.get_strands().begin(); it != prev(loop_link.get_strands().end()); it++) {    
+      auto next_strand = next(it);
+      cum_rates[n] = cum_rates[n - 1] + get_slide_rate(*it, *next_strand, 1) + get_slide_rate(*it, *next_strand, -1);
+      n++;
+    }
   }
-  }
-  //-------------------------------------------------------------------
-  if (cum_rates.back() == 0)
-  {
-    IF(true){
-    cout<<"cumulative rate are 0, let's output the number of linkers in the loops :" <<endl; 
-    for(auto& loop : loop_link.get_strands())
-    {cout<<loop->get_r().size()<<endl;}}
+
+  if (cum_rates.back() == 0) {
+    IF(true) {
+      cout << "cumulative rate are 0, let's output the number of linkers in the loops :" << endl; 
+      for(const auto& loop : loop_link.get_strands()) {
+        cout << loop->get_r().size() << endl;
+      }
+    }
     throw invalid_argument("cum_rates.back()=0 no available process"); 
   }
-  //for(auto& rate : cum_rates){cout<<rate<<endl;}
 }
 
 int Gillespie::pick_random_process(vector<double>& cum_rates) const
@@ -103,71 +98,45 @@ int Gillespie::pick_random_process(vector<double>& cum_rates) const
   return distance(cum_rates.begin(),rate_selec);
 }
 
-double Gillespie::evolve(int *bind)
-{
-  IF(true){cout<<"-------------------------------------------------"<<endl;}
-  IF(true) { cout << "Gillespie : start evolve" << endl; }
-  IF(true){cout<<"-------------------------------------------------"<<endl;}
-  //IF(true){check_loops_integrity();}$
-  //IF(true){if(Linker::counter!=N_linker_max){exit(0);}}
-  // -----------------------------------------------------------------------------
-  // -----------------------------------------------------------------------------
-  // compute the cumulative transition rates for each loop
+double Gillespie::evolve(int *bind) {
+  // Compute the cumulative transition rates for each loop
   vector<double> cum_rates;
-  if(slide){
-  // the +1 is for removing a bond
-  // the -1 is for the (0,0,0) linker that cannot be slide
-  // +1 is for diffusion of free linkers
-    cum_rates.resize(loop_link.get_strand_size()*2 + 1-1+1,0);}
-  else{
-    // the +1 is for removing a bond
-    // the +1 is for diffusion
-    cum_rates.resize(loop_link.get_strand_size() + 1 +1 ,0);}
-  // -----------------------------------------------------------------------------
-  // -----------------------------------------------------------------------------
-  try{compute_cum_rates(cum_rates);}
-  catch(invalid_argument& e){return 0.;}
-  // -----------------------------------------------------------------------------
-  // -----------------------------------------------------------------------------
-  // pick a random process
-  int rate_select(pick_random_process(cum_rates));
-  //cout<<"index of the rate selected = "<<rate_select<<endl;
-  // Exectute the process
-  if (rate_select == 0)
-  {
-        // Unbind a loop
-    IF(true) { cout << "Gillespie : remove a bond" << endl; }
-    // unbind
+  // +1 removing a bond, -1 (0,0,0) that cannot be slide +1 is for diffusion
+  cum_rates.resize(slide ? loop_link.get_strand_size() * 2 + 1-1+1 : loop_link.get_strand_size() + 2 , 0);
+
+  try {
+    compute_cum_rates(cum_rates);
+  } catch(invalid_argument& e) {
+    IF(true) cout << "Invalid argument in compute_cum_rates" << endl;
+    return 0.0;
+  }
+
+  // Pick a random process
+  int rate_select = pick_random_process(cum_rates);
+
+  // Execute the process
+  if (rate_select == 0) {
+    IF(true) cout << "Gillespie : remove a bond" << endl;
     unbind_random_loop();
     *bind = 0;
-  }
-  else if(rate_select == 1)
-  {
-    IF(true){cout<<"Gillespie : move the linkers"<<endl;}
+  } else if (rate_select == 1) {
+    IF(true) cout << "Gillespie : move the linkers" << endl;
     move_random_free_linkers();
     *bind = 1;
-  }
-  else if(rate_select>=loop_link.get_strand_size()+2)
-  {
-    // slide
-    IF(true){cout<<"Gillespie : slide a bond"<<endl;}
-    int loop_index_left(rate_select-loop_link.get_strand_size()-2);
+  } else if (rate_select >= loop_link.get_strand_size() + 2) {
+    IF(true) cout << "Gillespie : slide a bond" << endl;
+    int loop_index_left = rate_select - loop_link.get_strand_size() - 2;
     slide_bond(loop_index_left);
-    *bind=2;
-  }
-  else
-  {
-    // add a linker to a strand or slide it
-    IF(true) { cout << "Gillespie : add a bond" << endl; }
-    int loop_index(rate_select-2); // rate_select = 1 => first bond
-
+    *bind = 2;
+  } else {
+    IF(true) cout << "Gillespie : add a bond" << endl;
+    int loop_index = rate_select - 2;
     add_bond(loop_index);
     *bind = 3;
   }
-  // remake the strands whose rates have been modified by the event.
-  //IF(true){check_loops_integrity();}
-  IF(true){cout<<"output the value of the rates"<<endl;}
-  IF(true){for(auto& rates : cum_rates){cout<<rates<<endl;}}
+
+  IF(true) { cout << "output the value of the rates" << endl;}
+   
   return draw_time(cum_rates.back());
 }
 
@@ -203,7 +172,7 @@ void Gillespie::add_bond(int loop_index)
 void Gillespie::unbind_random_loop()
 {
   // select the index of the left bond to remove
-  // last index is loop.size-1
+  // last index is loop_link.size-1
   // the left bond index maximum is loop.size -2
   uniform_int_distribution<int> distribution(0, loop_link.get_strand_size() - 2);
   int index(distribution(generator));
@@ -213,10 +182,13 @@ void Gillespie::unbind_random_loop()
 
   // set the linker that was bound to unbound
   //loop_selec_left->get_Rright()->set_free();
-  loop_link.set_free(loop_selec_left->get_Rright());
+  Dangling* dangling_strand = dynamic_cast<Dangling*>(loop_selec_left);
+  if (dangling_strand == nullptr) {
+  loop_link.set_free(loop_selec_left->get_Rright());}
+  else{loop_link.set_free(loop_selec_left->get_Rleft());}
   // create a new loop that is the combination of both inputs
 
-  Strand* loop(loop_link.Create_Strand(*loop_selec_right->unbind_from(loop_selec_left)));
+  Strand* strand(loop_link.Create_Strand(*loop_selec_right->unbind_from(loop_selec_left)));
   IF(true){cout<<"Gillespie : remove the old strand from loop_link"<<endl;}
   // save the reference of the linker to actualize the linker's state
   Linker* freed((loop_selec_right)->get_Rleft());
@@ -227,7 +199,7 @@ void Gillespie::unbind_random_loop()
   // 1) access all the affected strands in the neighboring
   set<Strand*,LessLoop> strands_affected = freed->get_strands();
   // 2) remove those that have just been created
-  strands_affected.erase(loop);
+  strands_affected.erase(strand);
   // 3) recompute the rates
   loop_link.remake_strands(strands_affected);
 }

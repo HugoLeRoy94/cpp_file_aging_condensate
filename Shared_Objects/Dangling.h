@@ -13,7 +13,8 @@ public:
           double ell_0,  // ell_0 is the coordinate
           double ell_in, // this is the remaining length
           double rho,
-          bool sliding);
+          bool sliding,
+          bool left_in);
   Dangling(const Dangling& dangling);
   Dangling(const Dangling& dangling,
             Linker* new_left_linker);
@@ -25,9 +26,11 @@ public:
   std::pair<std::unique_ptr<Strand>,std::unique_ptr<Strand>> bind() const override;
   std::unique_ptr<Strand> do_slide(double dl,bool right) const override;
   double get_ell_coordinate_1() const override;
+  bool get_left() const;
 private:
   Strand* clone() const override;
   double radius;
+  bool left;
   // returns a random position in a sphere
   std::array<double,3> random_in_volume() override;
   // number of configuration of a polymer bound in r1 and length ell
