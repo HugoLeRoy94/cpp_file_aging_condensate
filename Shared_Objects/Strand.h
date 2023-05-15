@@ -9,11 +9,12 @@ class Strand
         // operators
         Strand();
         Strand(Linker* R0,
+                Linker* R1,
                 double ell_coordinate_0,
                 double rho,
                 bool sliding);
         virtual ~Strand();
-        Strand(const Strand& strand, Linker* new_left_linker);
+        Strand(const Strand& strand, Linker* new_left_linker,Linker* new_right_linker);
         Strand(const Strand& strand);
         bool operator<(const Strand &otherstrand) const;
         // do the moves
@@ -22,7 +23,7 @@ class Strand
         virtual std::unique_ptr<Strand> do_slide(double dl,bool right) const = 0;
         // Accessors :
         Linker* get_Rleft() const;
-        virtual Linker* get_Rright() const =0;
+        Linker* get_Rright() const;
         std::vector<Linker*> get_r() const;
         std::vector<Linker*> get_occ_r() const;
         double get_ell() const;
@@ -47,6 +48,7 @@ class Strand
         virtual Strand* clone() const = 0;
         virtual std::array<double,3> random_in_volume() = 0;
         Linker* Rleft;               // Position of the right and left anchor
+        Linker* Rright;
         std::vector<Linker*> free_linkers,occ_linkers;     // position of all crosslinkers
         //std::vector<std::vector<double>> rates, cum_rates; // rate of binding at any linkers for every length
         //std::vector<double> sum_l_cum_rates;               // rate of binding at any linkers

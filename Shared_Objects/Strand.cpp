@@ -3,6 +3,7 @@ using namespace std;
 
 Strand::Strand(){}
 Strand::Strand(Linker* R0,
+            Linker* R1,
             double ell_0,
             double rho,
             bool sliding)
@@ -11,6 +12,7 @@ Strand::Strand(Linker* R0,
   // generator.seed(seed);
   //  the right anchoring point of the strand
   Rleft = R0;
+  Rright = R1;
   ell_coordinate_0 = ell_0;
   //if (rho_adjust){rho0 = rho + (0.1 - rho) * (diff(Rright, Rleft) / ell - dsl);}
   rho0 = rho;
@@ -23,13 +25,14 @@ Strand::~Strand()
 
 }
 
-Strand::Strand(const Strand& strand, Linker* new_left_linker)
+Strand::Strand(const Strand& strand, Linker* new_left_linker,Linker* new_right_linker)
 {
   IF(true){cout<<"Strand : Copy constructor with left_linker"<<endl;}
   xg = strand.xg;
   yg = strand.yg;
   zg = strand.zg;
   Rleft = new_left_linker;
+  Rright = new_right_linker;
   rho0 = strand.rho0;
   ell_coordinate_0 = strand.ell_coordinate_0;
   ell = strand.ell;
@@ -44,6 +47,7 @@ Strand::Strand(const Strand& strand)
   yg = strand.yg;
   zg = strand.zg;
   Rleft = strand.Rleft;
+  Rright = strand.Rright;
   rho0 = strand.rho0;
   ell_coordinate_0 = strand.ell_coordinate_0;
   ell = strand.ell;
@@ -182,6 +186,8 @@ void Strand::Check_integrity() const
 */
 // -----------------------------------------------------------------------------
 Linker* Strand::get_Rleft() const { return Rleft; }
+
+Linker* Strand::get_Rright() const { return Rright; }
 
 std::vector<Linker*> Strand::get_r() const { return free_linkers; }
 

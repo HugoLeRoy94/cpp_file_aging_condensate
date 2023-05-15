@@ -2,14 +2,14 @@
 #include "Gillespie/Gillespie.h"
 using namespace std;
 int main(int argc, char* argv[]){
-  int t_tot(1000);
+  int t_tot(10);
   double ell_tot(100.);
   //double distance_anchor(1000.);
   double rho0(pow(10,-2));
   double BindingEnergy(-10);
   int bind(0.);
   double* R;
-  Gillespie* S = new Gillespie(ell_tot,rho0,BindingEnergy,0.000207352*5,19880,false,20,1);
+  Gillespie* S = new Gillespie(ell_tot,0.,BindingEnergy,5.20142*pow(10,-5),5984365,false,3,1);
   cout<<"beginning of the simulation"<<endl;
   for(int n(0);n<t_tot;n++){
   //cout<<n<<endl;
@@ -21,6 +21,8 @@ int main(int argc, char* argv[]){
   //  cout<<n<<endl;
   //  exit(0);
   //}
+  cout<<"evolve over"<<endl;
+ S->Print_Loop_positions();
   }
   delete S;
   //set<array<double,3>> res;

@@ -6,10 +6,9 @@ Loop::Loop(Linker* R0,
            double ell_0,
            double ell_1,
            double rho,
-           bool sliding) : Strand(R0,ell_0,rho,sliding)
+           bool sliding) : Strand(R0,R1,ell_0,rho,sliding)
 {
   IF(true) { cout << "Loop : creator" << endl; }
-  Rright = R1;
   ell_coordinate_1 = ell_1;
   ell = ell_coordinate_1 - ell_coordinate_0;
     // Compute the volume covered by the polymer
@@ -46,11 +45,9 @@ Loop::Loop(Linker* R0,
 }
 
 Loop::Loop(const Loop &loop,
-            Linker* new_left_linker,
-            Linker* new_right_linker) : Strand(loop,new_left_linker)
+            Linker* new_left_linker,Linker* new_right_linker) : Strand(loop,new_left_linker,new_right_linker)
 {
   IF(true){cout<<"Loop constructor with new link"<<endl;}
-  Rright = new_right_linker;
   ell_coordinate_1 = loop.ell_coordinate_1;
   a = loop.a;
   b = loop.b;
@@ -60,7 +57,6 @@ Loop::Loop(const Loop &loop,
 
 Loop::Loop(const Loop &loop) : Strand(loop)
 {
-  Rright = loop.Rright;
   ell_coordinate_1 = loop.ell_coordinate_1;
   a = loop.a;
   b = loop.b;
@@ -127,13 +123,12 @@ std::unique_ptr<Strand> Loop::unbind_from(Strand* left_strand) const
     if (dangling_strand != nullptr) {
         // The pointer is a Dangling*
         return std::make_unique<Dangling>(
-            Rright,                            
-            ell_coordinate_1,
+            nullptr, // if the left strand is a dangling, then it is necessarely bound on its right
+            Rright,
+            0.,
             ell + left_strand->get_ell(),
             rho0,
-            slide,
-            dangling_strand->get_left()
-        );
+            slide);
     } else {
         // The pointer is not a Dangling*
         return std::make_unique<Loop>(
@@ -171,7 +166,6 @@ void Loop::Check_integrity() const
 // ---------------------------------------------------------------------------
 //-----------------------------------accessor---------------------------------
 // ---------------------------------------------------------------------------
-Linker* Loop::get_Rright() const { return Rright; }
 
 double Loop::get_theta() const { return atan2(0.5 * (Rright->r().at(1) - Rleft->r().at(1)), 0.5 * (Rright->r().at(0) - Rleft->r().at(0))); }
 

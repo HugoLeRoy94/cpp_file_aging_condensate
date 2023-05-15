@@ -9,19 +9,18 @@ class Dangling : public Strand
   */
 public:
   Dangling();
-  Dangling(Linker* R0,
+  Dangling(Linker* R0, // left linker
+          Linker* R1, // right linker : one of the two is a nullpointer
           double ell_0,  // ell_0 is the coordinate
           double ell_in, // this is the remaining length
           double rho,
-          bool sliding,
-          bool left_in);
+          bool sliding);
   Dangling(const Dangling& dangling);
   Dangling(const Dangling& dangling,
-            Linker* new_left_linker);
+            Linker* new_left_linker,Linker* new_right_linker);
   double get_S(double dl=0)const override; // entropy of the polymer.
 
   void get_volume_limit(std::array<double,3>& main_ax, std::array<double,3>& ctr_mass,double& a, double& b) const override;
-  Linker* get_Rright() const;
   std::unique_ptr<Strand> unbind_from(Strand* left_strand) const override;
   std::pair<std::unique_ptr<Strand>,std::unique_ptr<Strand>> bind() const override;
   std::unique_ptr<Strand> do_slide(double dl,bool right) const override;
@@ -30,7 +29,6 @@ public:
 private:
   Strand* clone() const override;
   double radius;
-  bool left;
   // returns a random position in a sphere
   std::array<double,3> random_in_volume() override;
   // number of configuration of a polymer bound in r1 and length ell

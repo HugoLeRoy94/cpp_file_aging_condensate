@@ -25,7 +25,8 @@ Gillespie::Gillespie(double ell_tot,
     kdiff = k_diff;
     loop_link.create_new_occupied_linker(0.,0.,0.);
     Linker* R0 = loop_link.get_linkers().at({0.,0.,0.});
-    Dangling dummy_dangling(R0, 0., ell, rho,slide,false); // dummy dangling that helps generate crosslinkers but has none initially
+    Linker* dummy_linker(nullptr);
+    Dangling dummy_dangling(R0,dummy_linker, 0., ell, rho,slide); // dummy dangling that helps generate crosslinkers but has none initially
     Strand* dummy_strand(loop_link.Create_Strand(dummy_dangling));
     // ---------------------------------------------------------------------------
     //-----------------------------initialize crosslinkers------------------------
@@ -38,8 +39,8 @@ Gillespie::Gillespie(double ell_tot,
     // ---------------------------------------------------------------------------
     //-----------------------------initialize dangling----------------------------
     IF(true){cout<< "Gillespie : create dangling" << endl;}
-    loop_link.Create_Strand(Dangling(R0, ell/2, ell/2, rho,slide,true));
-    loop_link.Create_Strand(Dangling(R0,ell/2, ell/2, rho,slide,false));
+    loop_link.Create_Strand(Dangling(dummy_linker,R0, 0., ell/2, rho,slide));
+    loop_link.Create_Strand(Dangling(R0,dummy_linker,ell/2, ell/2, rho,slide));
     //print_random_stuff();
     //for(auto& it : linker_to_strand){for(auto& it2 : it.second){cout<<it2->get_Rleft()[0]<<" "<<it2->get_Rleft()[1]<<" "<<it2->get_Rleft()[2]<<endl;}}
     IF(true) { cout << "Gillespie : created" << endl; }
@@ -99,6 +100,7 @@ int Gillespie::pick_random_process(vector<double>& cum_rates) const
 }
 
 double Gillespie::evolve(int *bind) {
+  IF(true){cout<<"-------------------------------------------------"<<endl<<"Start Evolve"<<endl<<"-------------------------------------------------"<<endl;;}
   // Compute the cumulative transition rates for each loop
   vector<double> cum_rates;
   // +1 removing a bond, -1 (0,0,0) that cannot be slide +1 is for diffusion
@@ -273,10 +275,12 @@ void Gillespie::reset_crosslinkers()
   IF(true){check_loops_integrity();}
   LoopLinkWrap new_loop_link(loop_link.g_dim());
   // create a new set of occupied crosslinkers
+  IF(true){cout<<"Gillespie : save the occupied linker to keep"<<endl;}
   set<array<double,3>> occ_linkers_to_remake;
   // save the occupied linkers that stay
   for(auto& strand : loop_link.get_strands()){
-    occ_linkers_to_remake.insert(strand->get_Rleft()->r());
+    if(strand->get_Rleft()!=nullptr){
+    occ_linkers_to_remake.insert(strand->get_Rleft()->r());}
     }
   // remake them
   for(auto& linker : occ_linkers_to_remake){
@@ -285,8 +289,9 @@ void Gillespie::reset_crosslinkers()
   // delete the linkers before
   // generate a bunch of free linkers
   // delete the linkers before generating new ones. Otherwise the counter of linker forbids generating new linkers
-  //int N_free_linker(loop_link.get_N_free_linker());
+  IF(true){cout<<"Gillespie : delete the free linkers"<<endl;}
   loop_link.delete_free_linkers(); 
+  IF(true){cout<<"Gillespie : generate new free linkers"<<endl;}
   set<array<double,3>> free_linkers_to_remake(generate_crosslinkers(true));
   
   IF(true){cout<<"Number of free linkers to remake : "<<free_linkers_to_remake.size()<<endl;}
@@ -296,6 +301,7 @@ void Gillespie::reset_crosslinkers()
   }
   // set all the crosslinker into the linker_to_strand
   // which also add the bound extremities
+  IF(true){cout<<"Gillespie : remake the loops"<<endl;}
   reset_loops(new_loop_link);
   loop_link.delete_linkers();
   loop_link = move(new_loop_link);
@@ -462,41 +468,42 @@ double Gillespie::get_slide_rate(Strand* left_strand, Strand* right_strand,doubl
   catch(invalid_argument ia){return 0.;}
 }
 
-void Gillespie::reset_loops(LoopLinkWrap& new_loop_link)
-{
-  // recreate all the loops while changing the extremities to bounded
-  IF(true){cout<<"Gillespie : reset loops"<<endl;}
-  for(auto& strand : loop_link.get_strands())
-  {
-      try
-      {
-          strand->get_Rright(); // check to know if it's dangling
-          // access the new linker via the coordinate of the old one : should always be valid
-          Linker* const new_linker_right = new_loop_link.get_linkers().at({strand->get_Rright()->r().at(0),
-                                                                         strand->get_Rright()->r().at(1),
-                                                                         strand->get_Rright()->r().at(2)});
-          Linker* const new_linker_left = new_loop_link.get_linkers().at({strand->get_Rleft()->r().at(0),
-                                                                        strand->get_Rleft()->r().at(1),
-                                                                        strand->get_Rleft()->r().at(2)});
-          
-          // seems that the new_linkers are invalid ?
-          Strand* newloop(new_loop_link.Create_Strand(Loop(*reinterpret_cast<Loop*>(strand),
-                                                            new_linker_left,new_linker_right)));
-      }
-      catch(out_of_range oor)
-      {
-        // access the new linker via the coordinate of the old one : should always be valid          
-          Linker* const new_linker_left = new_loop_link.get_linkers().at({strand->get_Rleft()->r().at(0),
-                                                          strand->get_Rleft()->r().at(1),
-                                                          strand->get_Rleft()->r().at(2)});
-          
-          Strand* newloop(new_loop_link.Create_Strand(Dangling(*reinterpret_cast<Dangling*>(strand),
-                                                            new_linker_left)));
-      }
-  }
-  IF(true){cout<<"Gillespie : copy finished : delete old strands"<<endl;}
-  loop_link.delete_strands();
+Linker* get_new_linker(const LoopLinkWrap& new_loop_link, const Linker* r) {
+    if(r==nullptr){cout<<"ouai ouai ouai"<<endl;}
+    //cout<<r->r().at(0)<<" "<<r->r().at(1)<<" "<<r->r().at(2)<<endl;
+    return new_loop_link.get_linkers().at({r->r().at(0), r->r().at(1), r->r().at(2)});
 }
+
+void Gillespie::reset_loops(LoopLinkWrap& new_loop_link) {
+    IF(true){cout << "Gillespie : reset loops" << endl;}
+
+    for(auto& strand : loop_link.get_strands()) {
+        Dangling* test = dynamic_cast<Dangling*>(strand);
+
+        if(test == nullptr) { // means it is not a Dangling
+            Linker* new_linker_right = get_new_linker(new_loop_link, strand->get_Rright());
+            Linker* new_linker_left = get_new_linker(new_loop_link, strand->get_Rleft());
+
+            Strand* newloop = new_loop_link.Create_Strand(Loop(*reinterpret_cast<Loop*>(strand),
+                                                                new_linker_left, new_linker_right));
+        } else {
+            Linker* new_linker = nullptr;
+            if(strand->get_Rleft() != nullptr){
+                new_linker = get_new_linker(new_loop_link, strand->get_Rleft());
+            } else {
+                new_linker = get_new_linker(new_loop_link, strand->get_Rright());
+            }
+
+            Strand* newloop = new_loop_link.Create_Strand(Dangling(*reinterpret_cast<Dangling*>(strand),
+                                                                  strand->get_Rleft() != nullptr ? new_linker : nullptr,
+                                                                  strand->get_Rleft() == nullptr ? new_linker : nullptr));
+        }
+    }
+
+    IF(true){cout << "Gillespie : copy finished : delete old strands" << endl;}
+    loop_link.delete_strands();
+}
+
 /*
 set<Strand*,LessLoop> Gillespie::get_vicinity(Linker* modified_linker,set<Strand*,LessLoop> strand_created)
 {

@@ -11,7 +11,7 @@ int Gillespie::get_N_strand() const { return loop_link.get_strand_size(); }
 
 void Gillespie::get_R(double *R, int size) const
 {
-  if (size != 3 * (loop_link.get_strand_size()))
+  if (size != 3 * (loop_link.get_strand_size()-1))
   {
     throw invalid_argument("invalid size in Gillespie::get_R");
   }
@@ -21,6 +21,7 @@ void Gillespie::get_R(double *R, int size) const
   int n(0);
   for (auto &it : loop_link.get_strands())
   {
+    if(it->get_Rleft()==nullptr){continue;}
     R[n] = it->get_Rleft()->r()[0];
     R[n + 1] = it->get_Rleft()->r()[1];
     R[n + 2] = it->get_Rleft()->r()[2];
@@ -109,9 +110,16 @@ void Gillespie::Print_Loop_positions() const
     //cout << "xg,yg,zg " << loop->get_Rg()[0] << " " << loop->get_Rg()[1] << " " << loop->get_Rg()[2] << endl;
     cout << "volume " << loop->get_V() << endl;
     cout << "ell " << loop->get_ell() << endl;
-    cout << "anchoring points. left :" << loop->get_Rleft()->r()[0] << " " << loop->get_Rleft()->r()[1] << " " << loop->get_Rleft()->r()[2] << " right : " << loop->get_Rright()->r()[0] << " " << loop->get_Rright()->r()[1] << " " << loop->get_Rright()->r()[2] << endl;
+    cout<<"anchoring points : ";
+    if(loop->get_Rleft()!=nullptr){cout << " left :" << loop->get_Rleft()->r()[0] << " " << loop->get_Rleft()->r()[1] << " " << loop->get_Rleft()->r()[2] ;}
+    if(loop->get_Rright()!=nullptr){cout<< " right : " << loop->get_Rright()->r()[0] << " " << loop->get_Rright()->r()[1] << " " << loop->get_Rright()->r()[2] ;}
+    cout<< endl;
     cout << "number of crosslinkers of this loop :" << loop->get_r().size() << endl
          << endl;
+  }
+  for(auto& key_linker : loop_link.get_linkers())
+  {
+    cout<<key_linker.second->is_free()<<" "<<key_linker.second->r()[0]<<" "<<key_linker.second->r()[1]<<" "<<key_linker.second->r()[2]<<endl;
   }
 }
 

@@ -16,8 +16,7 @@ public:
             Linker* new_left_linker,
             Linker* new_rightlinker); // overloaded constructor with new linkers
   // Accessors :
-  Linker* get_Rright() const;
-  
+
   double get_ell_coordinate_1() const override;
   double get_theta() const; // angle with x axis
   double get_phi() const;   // angle with z axis
@@ -30,7 +29,6 @@ public:
   std::unique_ptr<Strand> do_slide(double dl,bool right) const override;
 private:
   Strand* clone() const override;
-  Linker* Rright;
   double unbound_term;
   double ell_coordinate_1;         // curvilinear coordinate of the linkers along the polymer
   double a,b;                                       // small and large axis
