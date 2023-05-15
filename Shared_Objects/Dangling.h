@@ -25,7 +25,6 @@ public:
   std::pair<std::unique_ptr<Strand>,std::unique_ptr<Strand>> bind() const override;
   std::unique_ptr<Strand> do_slide(double dl,bool right) const override;
   double get_ell_coordinate_1() const override;
-  bool get_left() const;
 private:
   Strand* clone() const override;
   double radius;
