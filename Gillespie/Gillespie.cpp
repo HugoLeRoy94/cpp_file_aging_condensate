@@ -183,11 +183,7 @@ void Gillespie::unbind_random_loop()
   IF(true) { cout << "Gillespie : unbind loop from the loop_left : "<<loop_selec_left<<" and the right : "<<loop_selec_right << endl; }
 
   // set the linker that was bound to unbound
-  //loop_selec_left->get_Rright()->set_free();
-  Dangling* dangling_strand = dynamic_cast<Dangling*>(loop_selec_left);
-  if (dangling_strand == nullptr) {
-  loop_link.set_free(loop_selec_left->get_Rright());}
-  else{loop_link.set_free(loop_selec_left->get_Rleft());}
+  loop_link.set_free(loop_selec_left->get_Rright());
   // create a new loop that is the combination of both inputs
 
   Strand* strand(loop_link.Create_Strand(*loop_selec_right->unbind_from(loop_selec_left)));

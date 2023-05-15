@@ -2,7 +2,7 @@
 #include "Gillespie/Gillespie.h"
 using namespace std;
 int main(int argc, char* argv[]){
-  int t_tot(10);
+  int t_tot(1000);
   double ell_tot(100.);
   //double distance_anchor(1000.);
   double rho0(pow(10,-2));
@@ -21,7 +21,6 @@ int main(int argc, char* argv[]){
   //  cout<<n<<endl;
   //  exit(0);
   //}
-  cout<<"evolve over"<<endl;
  S->Print_Loop_positions();
   }
   delete S;
