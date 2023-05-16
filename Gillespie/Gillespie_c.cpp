@@ -30,6 +30,12 @@ extern "C"
     return gillespie->get_S();
   }
 
+  void get_S_array(void* ptr, double* S, int size)
+  {
+    Gillespie* gillespie = reinterpret_cast<Gillespie*>(ptr);
+    gillespie->get_S_array(S,size);
+  }
+
   double get_F(void* ptr){
     Gillespie* gillespie = reinterpret_cast<Gillespie*>(ptr);
     return gillespie->get_F();

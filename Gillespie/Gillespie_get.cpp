@@ -92,6 +92,20 @@ double Gillespie::get_S() const
   return S;
 }
 
+void Gillespie::get_S_array(double* S, int size) const
+{
+  if (size != loop_link.get_strand_size())
+  {
+    throw invalid_argument("invalid size in Gillespie::get_ell");
+  }
+  int n(0);
+  for (auto &it : loop_link.get_strands())
+  {
+    S[n] = it->get_S();
+    n++;
+  }
+}
+
 double Gillespie::get_F() const
 {
   double F(get_N_strand()*binding_energy);

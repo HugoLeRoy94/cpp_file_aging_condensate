@@ -16,6 +16,7 @@ public:
     void get_r(double* r,int size) const;
     void get_r_gillespie(double* r, int size)const;
     double get_S() const;
+    void get_S_array(double* S, int size) const;
     double get_F() const;
     int get_r_size()const;
     int get_r_gillespie_size() const;
