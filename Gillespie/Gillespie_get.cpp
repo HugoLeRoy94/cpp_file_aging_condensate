@@ -31,11 +31,13 @@ void Gillespie::get_R(double *R, int size) const
 
 void Gillespie::get_ell_coordinates(double* ell_coordinate,int size)const 
 {
-  if(size != loop_link.get_strand_size()){throw invalid_argument("invalid size in Gillespie::get_R");}
+  if(size != loop_link.get_strand_size()-1){throw invalid_argument("invalid size in Gillespie::get_R");}
 int n(0);
-  for(auto& loop : loop_link.get_strands()){
-    ell_coordinate[n] = loop->get_ell_coordinate_0();
+  for(auto& strand : loop_link.get_strands()){
+    if(strand->get_Rleft()!=nullptr){
+    ell_coordinate[n] = strand->get_ell_coordinate_0();
     n++;
+    }
   }
 }
 
