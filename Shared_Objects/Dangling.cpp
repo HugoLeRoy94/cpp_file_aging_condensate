@@ -90,7 +90,7 @@ double Dangling::compute_binding_rate(double li, Linker* rlinker) const {
         return 0.0;
     }
     // Compute the result
-    double rate = exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * r_li_ratio) / ell;
+    double rate = exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * r_li_ratio) ;/// ell; division by ell for binding per unit length, multiplication by ell to account for higher rate of visit of mu-states.
     return rate;
 }
 
