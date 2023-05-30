@@ -110,7 +110,7 @@ void Gillespie::get_S_array(double* S, int size) const
 
 double Gillespie::get_F() const
 {
-  double F(get_N_strand()*binding_energy);
+  double F((get_N_strand()-1)*binding_energy);
   for (auto &it : loop_link.get_strands())
   {
     F += - it->get_S();
