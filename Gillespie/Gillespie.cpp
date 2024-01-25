@@ -232,7 +232,9 @@ void Gillespie::move_random_free_linkers()
   Linker* moved_linker(loop_link.diffuse_random_free_linker(r));
   // 1) access all the affected strands in the neighboring
   IF(true){cout<<"Gillespie : move_random_free_linker : move the linker"<<endl;}
-  set<Strand*,LessLoop> strands_affected = moved_linker->get_strands();    
+  set<Strand*,LessLoop> strands_affected = moved_linker->get_strands();
+  // check all the other loops if they are affected
+  
   // 3) recompute the rates
   IF(true){cout<<"Gillespie : move_random_free_linker : remake the affected strands"<<endl;}
   loop_link.remake_strands(strands_affected);
@@ -247,9 +249,11 @@ void Gillespie::move_random_free_linkers()
     double a,b;
     array<double,3> ctr_mass,main_ax;
     strand->get_volume_limit(main_ax,ctr_mass,a,b);
-    r = generate_a_point_in_ellipse(main_ax,ctr_mass,a,b,1);
+    set<array<double,3>> res;
+    generate_point_in_ellipse(main_ax,ctr_mass,a,b,res,1);
+    r = *res.begin();
     goto move;
-    reset_crosslinkers();
+    //reset_crosslinkers();
   }
 }
 
