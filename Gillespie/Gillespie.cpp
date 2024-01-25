@@ -229,7 +229,7 @@ void Gillespie::move_random_free_linkers()
   IF(true){cout<<"Gillespie : move_random_free_linker : select a Linker"<<endl;}
   move:
   array<double,3> r({0,0,0});
-  Linker* moved_linker(loop_link.diffuse_random_free_linker());
+  Linker* moved_linker(loop_link.diffuse_random_free_linker(r));
   // 1) access all the affected strands in the neighboring
   IF(true){cout<<"Gillespie : move_random_free_linker : move the linker"<<endl;}
   set<Strand*,LessLoop> strands_affected = moved_linker->get_strands();    
@@ -241,7 +241,13 @@ void Gillespie::move_random_free_linkers()
   if(moved_linker->get_strands().size()==0){
     //remake a linker in the vicinity of one of the strand
     //delete the moved strand:
-    r = 
+    vector<double> cum_Ploop(compute_cum_Ploop());
+    Strand* strand(select_strand(cum_Ploop));
+    // now generate one linker in this loop
+    double a,b;
+    array<double,3> ctr_mass,main_ax;
+    strand->get_volume_limit(main_ax,ctr_mass,a,b);
+    r = generate_a_point_in_ellipse(main_ax,ctr_mass,a,b,1);
     goto move;
     reset_crosslinkers();
   }
@@ -265,6 +271,37 @@ double Gillespie::draw_time(double rate) const
   uniform_real_distribution<double> distrib;
   double xi(distrib(generator));
   return -log(1 - xi) / rate;
+}
+
+  vector<double> Gillespie::compute_cum_Ploop() const
+{
+      double total_volume(0.);
+      for(auto& strand : loop_link.get_strands()){total_volume+=strand->get_V();}
+      IF(true){cout<<"total volume = "<<total_volume<<endl;}
+      vector<double> cum_Ploop(loop_link.get_strands().size(),0);
+      double cumSum(0);
+      int n(0);
+      for(auto& strand : loop_link.get_strands())
+      {
+        cumSum+=strand->get_V()/total_volume;
+        cum_Ploop[n]=cumSum;
+        n++;
+      }
+  return cum_Ploop;
+}
+
+
+Strand* Gillespie::select_strand(vector<double>& cum_Ploop)
+{
+  // select the loop in which we will create a linker:
+        uniform_real_distribution<double> distribution(0, cum_Ploop.back());
+        double pick_rate = distribution(generator);
+        // becareful : if the rate_selec number is higher than cum_rates.back()  lower_bound returns cum_rates.back()
+        vector<double>::iterator strand_selec = lower_bound(cum_Ploop.begin(), cum_Ploop.end(), pick_rate);
+        //set<Strand*,LessLoop>::iterator strand(loop_link.get_strand(distance(cum_Ploop.begin(),strand_selec)));
+        Strand* strand(*(loop_link.get_strand(distance(cum_Ploop.begin(),strand_selec))));
+
+        return strand;
 }
 
 void Gillespie::reset_crosslinkers()
