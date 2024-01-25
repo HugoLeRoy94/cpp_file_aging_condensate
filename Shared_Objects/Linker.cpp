@@ -35,9 +35,12 @@ void Linker::print_position(string end)const
 {
     cout<<R[0]<<" "<<R[1]<<" "<<R[2]<<end;
 }
-void Linker::diffuse()
+void Linker::diffuse(array<double,3> r)
 {
     // chose a direction to make the move.
+    if(r[0]!=0 ||  r[1]!=0. || r[2]!=0){
+        R = r;
+    }
     normal_distribution<double> distribution(0.,1.);
     double dx(distribution(generator)); //generate a diffusion vector
     double dy(distribution(generator)); //generate a diffusion vector

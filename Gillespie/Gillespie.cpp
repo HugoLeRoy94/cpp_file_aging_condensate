@@ -227,6 +227,8 @@ void Gillespie::move_random_free_linkers()
   // move the linkers
   IF(true){cout<<"Gillespie : Move_linkers : diffuse linkers"<<endl;}
   IF(true){cout<<"Gillespie : move_random_free_linker : select a Linker"<<endl;}
+  move:
+  array<double,3> r({0,0,0});
   Linker* moved_linker(loop_link.diffuse_random_free_linker());
   // 1) access all the affected strands in the neighboring
   IF(true){cout<<"Gillespie : move_random_free_linker : move the linker"<<endl;}
@@ -239,6 +241,8 @@ void Gillespie::move_random_free_linkers()
   if(moved_linker->get_strands().size()==0){
     //remake a linker in the vicinity of one of the strand
     //delete the moved strand:
+    r = 
+    goto move;
     reset_crosslinkers();
   }
 }

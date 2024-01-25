@@ -65,7 +65,7 @@ class LoopLinkWrap
         
         std::map<std::array<double,3>,Linker*> get_linkers3d() const;
 
-        Linker* diffuse_random_free_linker();
+        Linker* diffuse_random_free_linker(std::array<double,3> r);
         
         /*
         |\/|. _ _ _ || _  _  _  _     _

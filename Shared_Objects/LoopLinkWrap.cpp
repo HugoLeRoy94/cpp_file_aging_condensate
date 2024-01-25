@@ -181,7 +181,7 @@ int LoopLinkWrap::get_linker_size() const{
 //                to_add->r()[2],
 //                to_add);
 //}
-Linker* LoopLinkWrap::diffuse_random_free_linker(){
+Linker* LoopLinkWrap::diffuse_random_free_linker(array<double,3> r){
     //cout<<"looplink::diffuse_random_free_linker : Nfree = "<<Nfree_linker<<endl;
     //cout<<"looplink::diffuse_random_free_linker : select a linker"<<endl;
 
@@ -189,7 +189,7 @@ Linker* LoopLinkWrap::diffuse_random_free_linker(){
     //cout<<"looplink::diffuse_random_free_linker : remove it from the map"<<endl;
     linkers.erase({random_link->r()[0],random_link->r()[1],random_link->r()[2]});
     //cout<<"looplink::diffuse_random_free_linker : move the linker"<<endl;
-    random_link->diffuse();
+    random_link->diffuse(r);
     //cout<<"looplink::diffuse_random_free_linker : add the linker into the map with new key"<<endl;
     linkers[{random_link->r()[0],random_link->r()[1],random_link->r()[2]}] = random_link;
     //cout<<"looplink::diffuse_random_free_linker : return the linker"<<endl;
