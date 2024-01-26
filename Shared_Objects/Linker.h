@@ -11,7 +11,7 @@ class Linker
         void set_free();
         void set_bounded();
         void add_strand(Strand* strand);
-        void diffuse(array<double,3> r);        
+        void diffuse(std::array<double,3> r);        
         Linker(std::array<double,3> r_c,int dim);
         ~Linker();
         int dimension;

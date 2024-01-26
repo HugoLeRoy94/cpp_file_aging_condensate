@@ -135,6 +135,19 @@ void generate_point_in_ellipse( array<double,3> main_ax,
   //file.open("trash.txt",std::ios::app);
   //for(auto& pts : res){file<<pts[0]<<" "<<pts[1]<<" "<<pts[2]<<endl;}
 }
+bool is_point_in_ellipsoid(array<double,3> main_ax, array<double,3> ctr_mass, double a, double b, array<double,3> point) {
+    // Translate the point to the ellipsoid's center
+    array<double,3> translated_point = {point[0] - ctr_mass[0], point[1] - ctr_mass[1], point[2] - ctr_mass[2]};
+    
+    // Assuming ax_from_main_ax, OmegaZ, and OmegaY functions are defined and compute the necessary transformations
+    array<array<double,3>,3> axes = ax_from_main_ax(main_ax, a, b); // Calculate axes based on the main axis and ellipsoid dimensions
+
+    // Transform the point to the ellipsoid's local coordinates
+    array<double,3> local_point = dot(axes, translated_point);
+
+    // Check if the point is inside the ellipsoid
+    return (pow(local_point[0], 2) / pow(a, 2) + pow(local_point[1], 2) / pow(b, 2) + pow(local_point[2], 2) / pow(b, 2)) <= 1;
+}
 
 void sph2cart(double r, double theta, double phi, double& x, double& y, double& z)
 {

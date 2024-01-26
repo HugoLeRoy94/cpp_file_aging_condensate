@@ -154,7 +154,7 @@ map<array<double,3>,Linker*> const &LoopLinkWrap::get_linkers() const
     return linkers;
 }
 
-Linker* LoopLinkWrap::get_random_free_linker() const
+Linker* LoopLinkWrap::get_random_free_linker()
 {
     int step(0);
     while(step<pow(10.,17.))
@@ -181,19 +181,19 @@ int LoopLinkWrap::get_linker_size() const{
 //                to_add->r()[2],
 //                to_add);
 //}
-Linker* LoopLinkWrap::diffuse_random_free_linker(array<double,3> r){
+Linker* LoopLinkWrap::diffuse_linker(array<double,3> r,Linker* linker){
     //cout<<"looplink::diffuse_random_free_linker : Nfree = "<<Nfree_linker<<endl;
     //cout<<"looplink::diffuse_random_free_linker : select a linker"<<endl;
 
-    Linker* random_link(get_random_free_linker());
+    
     //cout<<"looplink::diffuse_random_free_linker : remove it from the map"<<endl;
-    linkers.erase({random_link->r()[0],random_link->r()[1],random_link->r()[2]});
+    linkers.erase({linker->r()[0],linker->r()[1],linker->r()[2]});
     //cout<<"looplink::diffuse_random_free_linker : move the linker"<<endl;
-    random_link->diffuse(r);
+    linker->diffuse(r);
     //cout<<"looplink::diffuse_random_free_linker : add the linker into the map with new key"<<endl;
-    linkers[{random_link->r()[0],random_link->r()[1],random_link->r()[2]}] = random_link;
+    linkers[{linker->r()[0],linker->r()[1],linker->r()[2]}] = linker;
     //cout<<"looplink::diffuse_random_free_linker : return the linker"<<endl;
-    return random_link;
+    return linker;
 }
 /*
 void LoopLinkWrap::diffuse_linkers(){

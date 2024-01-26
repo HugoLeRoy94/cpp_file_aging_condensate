@@ -179,6 +179,14 @@ void Strand::Check_integrity() const
   cout<<ell_coordinate_0<<endl;
 }
 
+bool Strand::isin(double x, double y, double z) const
+{
+  array<double,3> main_ax;
+  array<double,3> ctr_mass;
+   double a,b;
+  get_volume_limit(main_ax,ctr_mass , a,b);
+  return is_point_in_ellipsoid(main_ax, ctr_mass,  a, b, {x,y,z});
+}
 // -----------------------------------------------------------------------------
 /*
  /\  _ _ _  _ _ _  _

@@ -37,6 +37,7 @@ class Strand
         virtual void get_volume_limit(std::array<double,3>& main_ax, std::array<double,3>& ctr_mass,double& a, double& b) const =0;
         void remove_from_linkers();
         virtual void Check_integrity() const;
+        bool isin(double x, double y, double z) const;
     protected:
         // compute the rates
         //void compute_all_rates();

@@ -7,8 +7,7 @@ class LoopLinkWrap
         std::map<std::array<double,3>,Linker*> linkers;
         std::set<Strand*,LessLoop> strands;
         int Nfree_linker;
-        void set_p_linkers(Strand* newly_created_strand);
-        Linker* get_random_free_linker()const;
+        void set_p_linkers(Strand* newly_created_strand);        
         void get_in_ellipse(    std::array<double,3> ctr_mass,
                                 std::array<double,3> main_ax,
                                 double a,
@@ -16,7 +15,7 @@ class LoopLinkWrap
                                 std::vector<Linker*>& free_linkers,
                                 std::vector<Linker*>& occ_linkers) const;
         int dimension;
-    public:
+    public:        
         LoopLinkWrap(int dim);
         ~LoopLinkWrap();
         int g_dim() const;
@@ -65,7 +64,8 @@ class LoopLinkWrap
         
         std::map<std::array<double,3>,Linker*> get_linkers3d() const;
 
-        Linker* diffuse_random_free_linker(std::array<double,3> r);
+        Linker* diffuse_linker(std::array<double,3> r,Linker* linker);
+        Linker* get_random_free_linker();
         
         /*
         |\/|. _ _ _ || _  _  _  _     _

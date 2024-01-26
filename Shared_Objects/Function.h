@@ -23,6 +23,7 @@ void generate_point_in_ellipse(std::array<double,3> main_ax,
                                double b,
                                std::set<std::array<double,3>>& res,
                                int N_linker);
+bool is_point_in_ellipsoid(std::array<double,3> main_ax, std::array<double,3> ctr_mass, double a, double b, std::array<double,3> point);
 struct {
         bool operator()(std::array<double,3> a, std::array<double,3> b) const { return a[0] < b[0]; }
     } customLess;

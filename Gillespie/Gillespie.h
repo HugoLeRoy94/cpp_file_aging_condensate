@@ -27,8 +27,8 @@ public:
     // -----------------------------------------------------------------------------
 
 private:
-    vector<double> compute_cum_Ploop() const;
-    Strand* select_strand(vector<double>& cum_Ploop);
+    std::vector<double> compute_cum_Ploop() const;
+    Strand* select_strand(std::vector<double>& cum_Ploop);
     void compute_cum_rates(std::vector<double>& cum_rates) const;
     int pick_random_process(std::vector<double>& cum_rates) const;
 

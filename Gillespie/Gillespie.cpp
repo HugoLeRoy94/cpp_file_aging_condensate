@@ -227,14 +227,21 @@ void Gillespie::move_random_free_linkers()
   // move the linkers
   IF(true){cout<<"Gillespie : Move_linkers : diffuse linkers"<<endl;}
   IF(true){cout<<"Gillespie : move_random_free_linker : select a Linker"<<endl;}
-  move:
+  Linker* moved_linker(loop_link.get_random_free_linker());
   array<double,3> r({0,0,0});
-  Linker* moved_linker(loop_link.diffuse_random_free_linker(r));
+  move:  
+  loop_link.diffuse_linker(r,moved_linker);
   // 1) access all the affected strands in the neighboring
   IF(true){cout<<"Gillespie : move_random_free_linker : move the linker"<<endl;}
   set<Strand*,LessLoop> strands_affected = moved_linker->get_strands();
   // check all the other loops if they are affected
-  
+  for(auto& strand : loop_link.get_strands()){
+    // evaluate if the new linker is in the loop
+    if(strand->isin(moved_linker->r().at(0),moved_linker->r().at(1),moved_linker->r().at(2))){
+      // remake strands
+      strands_affected.insert(strand);
+    }
+  }
   // 3) recompute the rates
   IF(true){cout<<"Gillespie : move_random_free_linker : remake the affected strands"<<endl;}
   loop_link.remake_strands(strands_affected);

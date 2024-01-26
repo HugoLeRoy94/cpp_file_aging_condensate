@@ -9,7 +9,7 @@ int main(int argc, char* argv[]){
   double BindingEnergy(-10);
   int bind(0.);
   double* R;
-  Gillespie* S = new Gillespie(ell_tot,0.,BindingEnergy,5.20142*pow(10,-5),5984365,false,3,1);
+  Gillespie* S = new Gillespie(ell_tot,0.,BindingEnergy,5.20142*pow(10,-5),5984365,false,5,3);
   cout<<"beginning of the simulation"<<endl;
   for(int n(0);n<t_tot;n++){
   //cout<<n<<endl;
