@@ -224,13 +224,16 @@ void Gillespie::get_r_gillespie(double *r, int size)const
   {
     throw invalid_argument("invalid size in Gillespie::get_r");
   }
-  int n(0);
+  //int n(0);
   for(auto& it : loop_link.get_linkers())
   {
-        r[3*n]    =   it.second->r()[0];
-        r[3*n+1]  =   it.second->r()[1];
-        r[3*n+2]  =   it.second->r()[2];
-        n++;
+        //r[3*n]    =   it.second->r()[0];
+        //r[3*n+1]  =   it.second->r()[1];
+        //r[3*n+2]  =   it.second->r()[2];
+        r[3*it.second->g_ID()]    =   it.second->r()[0];
+        r[3*it.second->g_ID()+  1]  =   it.second->r()[1];
+        r[3*it.second->g_ID()+2]  =   it.second->r()[2];
+        //n++;
   }
 }
 

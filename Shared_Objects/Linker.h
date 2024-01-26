@@ -12,15 +12,17 @@ class Linker
         void set_bounded();
         void add_strand(Strand* strand);
         void diffuse(std::array<double,3> r);        
-        Linker(std::array<double,3> r_c,int dim);
+        Linker(std::array<double,3> r_c,int dim,int id);
         ~Linker();
         int dimension;
+        int ID;
     public:                
         std::array<double,3> r() const;
         bool is_free() const;
         void remove_strand(Strand* strand);
         std::set<Strand*,LessLoop> get_strands() const;
         void print_position(std::string sep)const;
+        int g_ID() const;
     
 };
 class map3dLink : public map3d<double,double,double,Linker*>

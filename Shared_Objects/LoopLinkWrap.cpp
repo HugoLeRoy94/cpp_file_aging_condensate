@@ -97,9 +97,9 @@ void LoopLinkWrap::set_occupied(Linker* link)
 
 void LoopLinkWrap::create_new_free_linker(double x,double y, double z)
 {
-    linkers[{x,y,z}] = new Linker({x,y,z},dimension);
-    Nfree_linker++;
+    linkers[{x,y,z}] = new Linker({x,y,z},dimension,counter);
     counter++;
+    Nfree_linker++;    
 }
 
 int LoopLinkWrap::get_N_free_linker() const
@@ -109,7 +109,7 @@ int LoopLinkWrap::get_N_free_linker() const
 
 void LoopLinkWrap::create_new_occupied_linker(double x, double y, double z)
 {
-    Linker* link = new Linker({x,y,z},dimension);
+    Linker* link = new Linker({x,y,z},dimension,counter);
     counter++;
     link->set_bounded();
     linkers[{x,y,z}] = link;

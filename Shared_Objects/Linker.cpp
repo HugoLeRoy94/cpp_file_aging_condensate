@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Linker::Linker(std::array<double,3> r_c,int dim){R = r_c;free=true;dimension=dim;}
+Linker::Linker(std::array<double,3> r_c,int dim,int id){R = r_c;free=true;dimension=dim;ID=id;}
 Linker::~Linker(){}
 
 array<double,3> Linker::r() const{
@@ -16,6 +16,8 @@ array<double,3> Linker::r() const{
     }
     else{throw invalid_argument("invalid dimension value");}
 }
+
+int Linker::g_ID() const{return ID;}
 
 void Linker::set_free(){free = true;}
 
