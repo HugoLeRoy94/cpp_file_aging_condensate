@@ -182,43 +182,13 @@ int LoopLinkWrap::get_linker_size() const{
 //                to_add);
 //}
 Linker* LoopLinkWrap::diffuse_linker(array<double,3> r,Linker* linker){
-    //cout<<"looplink::diffuse_random_free_linker : Nfree = "<<Nfree_linker<<endl;
-    //cout<<"looplink::diffuse_random_free_linker : select a linker"<<endl;
-
-    
-    //cout<<"looplink::diffuse_random_free_linker : remove it from the map"<<endl;
     linkers.erase({linker->r()[0],linker->r()[1],linker->r()[2]});
-    //cout<<"looplink::diffuse_random_free_linker : move the linker"<<endl;
+    //cout<<"diffuse"<<endl;
     linker->diffuse(r);
-    //cout<<"looplink::diffuse_random_free_linker : add the linker into the map with new key"<<endl;
+    //cout<<"diffused"<<endl;
     linkers[{linker->r()[0],linker->r()[1],linker->r()[2]}] = linker;
-    //cout<<"looplink::diffuse_random_free_linker : return the linker"<<endl;
     return linker;
 }
-/*
-void LoopLinkWrap::diffuse_linkers(){
-    // make a new map3d
-    map3dLink new_map3d;
-for(auto& slice1 : linkers.underlying_array()){
-    for(auto& slice2 : slice1.second){
-        for(auto& linker: slice2.second){
-            if(linker.second->is_free()){
-            linker.second->diffuse();
-            new_map3d.add(linker.second->r()[0],
-                          linker.second->r()[1],
-                          linker.second->r()[2],
-                          linker.second);}
-            else{
-            new_map3d.add(linker.second->r()[0],
-                          linker.second->r()[1],
-                          linker.second->r()[2],
-                          linker.second);}
-            }
-        }
-    }
-    linkers = new_map3d;
-}
-*/
 /*
     |\/|. _ _ _ || _  _  _  _     _
     |  ||_\(_(/_||(_|| |(/_(_)|_|_\

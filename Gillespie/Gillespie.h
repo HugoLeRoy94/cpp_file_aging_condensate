@@ -13,8 +13,8 @@ public:
     void get_R(double* R, int size) const; // return the position of the anchored points
     void get_ell_coordinates(double* ell_coordinate,int size)const; // get the curvilinear coordinates of the links.
     void get_ell(double* ells, int size) const;// return the list of length of the loops.
-    void get_r(double* r,int size) const;
-    void get_r_gillespie(double* r, int size)const;
+    void get_r(double* r,int size,bool periodic =false) const;
+    void get_r_gillespie(double* r, int size,bool periodic =false)const;
     double get_S() const;
     void get_S_array(double* S, int size) const;
     double get_F() const;

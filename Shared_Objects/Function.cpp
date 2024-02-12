@@ -135,7 +135,7 @@ void generate_point_in_ellipse( array<double,3> main_ax,
   //file.open("trash.txt",std::ios::app);
   //for(auto& pts : res){file<<pts[0]<<" "<<pts[1]<<" "<<pts[2]<<endl;}
 }
-bool is_point_in_ellipsoid(array<double,3> main_ax, array<double,3> ctr_mass, double a, double b, array<double,3> point) {
+/*bool is_point_in_ellipsoid(array<double,3> main_ax, array<double,3> ctr_mass, double a, double b, array<double,3> point) {
     // Translate the point to the ellipsoid's center
     array<double,3> translated_point = {point[0] - ctr_mass[0], point[1] - ctr_mass[1], point[2] - ctr_mass[2]};
     
@@ -147,6 +147,30 @@ bool is_point_in_ellipsoid(array<double,3> main_ax, array<double,3> ctr_mass, do
 
     // Check if the point is inside the ellipsoid
     return (pow(local_point[0], 2) / pow(a, 2) + pow(local_point[1], 2) / pow(b, 2) + pow(local_point[2], 2) / pow(b, 2)) <= 1;
+}*/
+bool is_point_in_ellipsoid(const std::array<double, 3>& main_ax, 
+                            const std::array<double, 3>& ctr,
+                           double a, double b, 
+                           const std::array<double, 3>& point) {
+    // Normalize the main axis
+    double n = norm(main_ax);
+    std::array<double, 3> norm_main_ax = {main_ax[0] / n, main_ax[1] / n, main_ax[2] / n};
+    
+    // Compute theta and phi from the main axis orientation
+    double theta = atan2(norm_main_ax[1], norm_main_ax[0]);
+    double phi = atan2(sqrt(pow(norm_main_ax[0], 2) + pow(norm_main_ax[1], 2)), norm_main_ax[2]) - acos(-1) / 2;
+    
+    // Inverse rotation matrices to align point with canonical ellipsoid axes
+    auto OmZ_inv = OmegaZ(-theta);  // Inverse rotation around Z-axis
+    auto OmY_inv = OmegaY(-phi);    // Inverse rotation around Y-axis
+    
+    // Transform the point to the ellipsoid's local coordinate system
+    auto p_minus_ctr = Minus(point, ctr);
+    auto p_local = dot(OmY_inv, dot(OmZ_inv, p_minus_ctr));
+    
+    // Check if the point is inside the ellipsoid using its canonical equation
+    double x = p_local[0], y = p_local[1], z = p_local[2];
+    return (pow(x, 2) / pow(a, 2)) + (pow(y, 2) / pow(b, 2)) + (pow(z, 2) / pow(a, 2)) <= 1;
 }
 
 void sph2cart(double r, double theta, double phi, double& x, double& y, double& z)

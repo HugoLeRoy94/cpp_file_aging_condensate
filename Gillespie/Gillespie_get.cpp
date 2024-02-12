@@ -55,7 +55,7 @@ void Gillespie::get_ell(double *ells, int size) const
   }
 }
 
-void Gillespie::get_r(double *r, int size) const
+void Gillespie::get_r(double *r, int size,bool periodic) const
 {
   if (size != get_r_size())
   {
@@ -66,9 +66,9 @@ void Gillespie::get_r(double *r, int size) const
   {
     for (auto &link : loop->get_r())
     {
-      r[3 * n] = link->r().at(0);
-      r[3 * n + 1] = link->r().at(1);
-      r[3 * n + 2] = link->r().at(2);
+      r[3 * n] = link->r(periodic).at(0);
+      r[3 * n + 1] = link->r(periodic).at(1);
+      r[3 * n + 2] = link->r(periodic).at(2);
       n++;
     }
   }
@@ -218,7 +218,7 @@ void Gillespie::check_loops_integrity()
   */
 }
 
-void Gillespie::get_r_gillespie(double *r, int size)const
+void Gillespie::get_r_gillespie(double *r, int size,bool periodic)const
 {
   if (size != get_r_gillespie_size())
   {
@@ -230,9 +230,9 @@ void Gillespie::get_r_gillespie(double *r, int size)const
         //r[3*n]    =   it.second->r()[0];
         //r[3*n+1]  =   it.second->r()[1];
         //r[3*n+2]  =   it.second->r()[2];
-        r[3*it.second->g_ID()]    =   it.second->r()[0];
-        r[3*it.second->g_ID()+  1]  =   it.second->r()[1];
-        r[3*it.second->g_ID()+2]  =   it.second->r()[2];
+        r[3*it.second->g_ID()]    =   it.second->r(periodic)[0];
+        r[3*it.second->g_ID()+  1]  =   it.second->r(periodic)[1];
+        r[3*it.second->g_ID()+2]  =   it.second->r(periodic)[2];
         //n++;
   }
 }

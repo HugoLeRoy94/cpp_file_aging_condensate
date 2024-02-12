@@ -231,14 +231,20 @@ void Gillespie::move_random_free_linkers()
   array<double,3> r({0,0,0});
   move:  
   loop_link.diffuse_linker(r,moved_linker);
+  //cout<<endl;
+  //cout<<"r = ";
+  //cout<<r[0]<<" "<<r[1]<<" "<<r[2]<<endl;
   // 1) access all the affected strands in the neighboring
   IF(true){cout<<"Gillespie : move_random_free_linker : move the linker"<<endl;}
   set<Strand*,LessLoop> strands_affected = moved_linker->get_strands();
   // check all the other loops if they are affected
+  //int n(0);
   for(auto& strand : loop_link.get_strands()){
     // evaluate if the new linker is in the loop
     if(strand->isin(moved_linker->r().at(0),moved_linker->r().at(1),moved_linker->r().at(2))){
       // remake strands
+      //cout<<n<<endl;
+      //n++;
       strands_affected.insert(strand);
     }
   }
@@ -259,6 +265,12 @@ void Gillespie::move_random_free_linkers()
     set<array<double,3>> res;
     generate_point_in_ellipse(main_ax,ctr_mass,a,b,res,1);
     r = *res.begin();
+    //cout<<main_ax[0]<<" "<<main_ax[1]<<" "<<main_ax[2]<<endl;
+    //cout<<ctr_mass[0]<<" "<<ctr_mass[1]<<" "<<ctr_mass[2]<<endl;
+    //cout<<a<<" "<<b<<endl;
+    //cout<<r[0]<<" "<<r[1]<<" "<<r[2]<<endl;
+    //string trash;
+    //cin>>trash;
     goto move;
     //reset_crosslinkers();
   }

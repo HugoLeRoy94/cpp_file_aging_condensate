@@ -5,7 +5,7 @@ class Linker
     friend class LoopLinkWrap;
     friend class map3dLink;
     private:
-        std::array<double,3> R;
+        std::array<double,3> R, deltaR; // deltaR keep trap of the reset of position
         bool free;
         std::set<Strand*,LessLoop> strands;
         void set_free();
@@ -17,7 +17,7 @@ class Linker
         int dimension;
         int ID;
     public:                
-        std::array<double,3> r() const;
+        std::array<double,3> r(bool periodic = false) const;
         bool is_free() const;
         void remove_strand(Strand* strand);
         std::set<Strand*,LessLoop> get_strands() const;

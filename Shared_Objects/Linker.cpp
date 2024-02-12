@@ -2,19 +2,26 @@
 
 using namespace std;
 
-Linker::Linker(std::array<double,3> r_c,int dim,int id){R = r_c;free=true;dimension=dim;ID=id;}
+Linker::Linker(std::array<double,3> r_c,int dim,int id){R = r_c;deltaR={0,0,0};free=true;dimension=dim;ID=id;}
 Linker::~Linker(){}
 
-array<double,3> Linker::r() const{
-    if(dimension == 3){
-        return R;}
-    else if(dimension == 2){
-        return {R[0],R[1],0.};
+array<double,3> Linker::r(bool periodic) const{
+    array<double,3> res = R;
+    if(periodic){
+        for(int i = 0;i<3;i++){
+            res[i]-=deltaR[i];
+            }
     }
-    else if(dimension == 1){
-        return {R[0],0.,0.};
-    }
-    else{throw invalid_argument("invalid dimension value");}
+    switch (dimension ){
+        case 3 :
+            return res;
+        case 2:
+            return {res[0],res[1],0.};
+        case 1 :
+            return {res[0],0.,0.};
+        default :
+            throw invalid_argument("invalid dimension value");
+    }    
 }
 
 int Linker::g_ID() const{return ID;}
@@ -41,7 +48,18 @@ void Linker::diffuse(array<double,3> r)
 {
     // chose a direction to make the move.
     if(r[0]!=0 ||  r[1]!=0. || r[2]!=0){
+            //cout<<r[0]<<" "<<r[1]<<" "<<r[2]<<endl;
+            //cout<<deltaR[0]<<" "<<deltaR[1]<<" "<<deltaR[2]<<endl;
+            //cout<<R[0]<<" "<<R[1]<<" "<<R[2]<<endl;
+        for(int i = 0; i<3;i++){
+            deltaR[i] += r[i] - R[i];
+        }
         R = r;
+        return;
+            //cout<<endl;
+            //cout<<r[0]<<" "<<r[1]<<" "<<r[2]<<endl;
+            //cout<<deltaR[0]<<" "<<deltaR[1]<<" "<<deltaR[2]<<endl;
+            //cout<<R[0]<<" "<<R[1]<<" "<<R[2]<<endl;
     }
     normal_distribution<double> distribution(0.,1.);
     double dx(distribution(generator)); //generate a diffusion vector

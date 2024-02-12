@@ -66,14 +66,14 @@ extern "C"
     return gillespie->get_r_gillespie_size();
   }
   
-  void get_r(void* ptr, double* r, int size){
+  void get_r(void* ptr, double* r, int size,bool periodic=false){
     Gillespie* gillespie = reinterpret_cast<Gillespie*>(ptr);
-    gillespie->get_r(r,size);
+    gillespie->get_r(r,size,periodic);
   }
   
-  void get_r_gillespie(void* ptr, double* r, int size){
+  void get_r_gillespie(void* ptr, double* r, int size,bool periodic = false){
     Gillespie* gillespie = reinterpret_cast<Gillespie*>(ptr);
-    gillespie->get_r_gillespie(r,size);
+    gillespie->get_r_gillespie(r,size,periodic);
   }
   
   void Print_Loop_positions(void* ptr){
