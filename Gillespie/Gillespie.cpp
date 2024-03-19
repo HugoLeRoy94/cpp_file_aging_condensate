@@ -39,8 +39,8 @@ Gillespie::Gillespie(double ell_tot,
     // ---------------------------------------------------------------------------
     //-----------------------------initialize dangling----------------------------
     IF(true){cout<< "Gillespie : create dangling" << endl;}
-    loop_link.Create_Strand(Dangling(dummy_linker,R0, 0., ell/2, rho,slide));
-    loop_link.Create_Strand(Dangling(R0,dummy_linker,ell/2, ell/2, rho,slide));
+    //loop_link.Create_Strand(Dangling(dummy_linker,R0, 0., ell/2, rho,slide));
+    loop_link.Create_Strand(Dangling(R0,dummy_linker,0, ell, rho,slide));
     //print_random_stuff();
     //for(auto& it : linker_to_strand){for(auto& it2 : it.second){cout<<it2->get_Rleft()[0]<<" "<<it2->get_Rleft()[1]<<" "<<it2->get_Rleft()[2]<<endl;}}
     IF(true) { cout << "Gillespie : created" << endl; }
@@ -55,7 +55,7 @@ void Gillespie::compute_cum_rates(vector<double>& cum_rates) const
 {
   IF(true) cout << "Gillespie : Start computing the cumulative probability array" << endl;
 
-  cum_rates[0] = (loop_link.get_strand_size() - 2) * exp(binding_energy);
+  cum_rates[0] = (loop_link.get_strand_size() - 1) * exp(binding_energy);
   cum_rates[1] = kdiff * loop_link.get_N_free_linker() + cum_rates[0];
 
   int n = 2;
@@ -176,11 +176,14 @@ void Gillespie::unbind_random_loop()
   // select the index of the left bond to remove
   // last index is loop_link.size-1
   // the left bond index maximum is loop.size -2
+  selection:
   uniform_int_distribution<int> distribution(0, loop_link.get_strand_size() - 2);
   int index(distribution(generator));
   Strand* loop_selec_left(*loop_link.get_strand(index));
   Strand* loop_selec_right(*loop_link.get_strand(index+1));
+  if(loop_selec_right->get_Rleft()->g_ID()==0){goto selection;}
   IF(true) { cout << "Gillespie : unbind loop from the loop_left : "<<loop_selec_left<<" and the right : "<<loop_selec_right << endl; }
+
 
   // set the linker that was bound to unbound
   loop_link.set_free(loop_selec_left->get_Rright());
@@ -189,7 +192,9 @@ void Gillespie::unbind_random_loop()
   Strand* strand(loop_link.Create_Strand(*loop_selec_right->unbind_from(loop_selec_left)));
   IF(true){cout<<"Gillespie : remove the old strand from loop_link"<<endl;}
   // save the reference of the linker to actualize the linker's state
+
   Linker* freed((loop_selec_right)->get_Rleft());
+
   // delete the loop before actualize vicinity.
   loop_link.Remove_Strand(loop_selec_left);
   loop_link.Remove_Strand(loop_selec_right);
