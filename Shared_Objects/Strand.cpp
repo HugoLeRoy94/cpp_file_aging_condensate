@@ -95,13 +95,12 @@ void Strand::compute_cum_rates(vector<double>& sum_l_cum_rates,
                                vector<vector<double>>& cum_rates) const
 {
   //cout<<"start computing cum_rates"<<endl;
-  cout<<whoIam()<<endl;
   //cout<<free_linkers.size()<<endl;
   //cout<<ell<<endl;
 //reserve the correct amount of memory
 sum_l_cum_rates.resize(free_linkers.size());
 cum_rates.resize(free_linkers.size());
-//for(auto& cum_rate : cum_rates){cout<<ell-1<<endl;cum_rate.resize((int)ell-1);}
+for(auto& cum_rate : cum_rates){cum_rate.resize((int)ell-1);}
 // the entry vectors must be empty
 int rindex(0);
 //cout<<"ok cum_rates size correct"<<endl;

@@ -200,34 +200,37 @@ void LoopLinkWrap::delete_pointers()
     delete_linkers();
 }
 
-//void LoopLinkWrap::get_in_ellipse(  std::array<double,3> ctr_mass,
-//                                    std::array<double,3> main_ax,
-//                                    double a,
-//                                    double b,
-//                                    std::vector<Linker*>& free_linkers,
-//                                    std::vector<Linker*>& occ_linkers)const
-//{
-//    double theta = atan2(main_ax[1],main_ax[0]);
-//    array<array<double,3>,3> OmZ(OmegaZ(-theta));
-//    double phi = atan2(sqrt(pow(main_ax[0],2)+pow(main_ax[1],2)),main_ax[2])-acos(-1)/2;
-//    array<array<double,3>,3> OmY(OmegaY(-phi));
-//
-//    
-//    array<double,3> r;
-//    for(auto& linker: linkers)
-//    {  
-//        r = dot(OmY,dot(OmZ,Minus(linker.second->r(),ctr_mass)));
-//        if(pow(r[0]/a,2)+pow(r[1]/b,2)+pow(r[2]/b,2) <= 1)
-//        {
-//            if(linker.second->is_free()){
-//                free_linkers.push_back(linker.second);
-//                }
-//            else{
-//                occ_linkers.push_back(linker.second);
-//                }
-//        }
-//    }
-//}
+/*
+void LoopLinkWrap::get_in_ellipse( const std::array<double,3>& ctr_mass,
+                                    const std::array<double,3>& main_ax,
+                                    double a,
+                                    double b,
+                                    std::vector<Linker*>& free_linkers,
+                                    std::vector<Linker*>& occ_linkers)const
+{
+    double theta = atan2(main_ax[1],main_ax[0]);
+    array<array<double,3>,3> OmZ(OmegaZ(-theta));
+    double phi = atan2(sqrt(pow(main_ax[0],2)+pow(main_ax[1],2)),main_ax[2])-acos(-1)/2;
+    array<array<double,3>,3> OmY(OmegaY(-phi));
+
+    
+    array<double,3> r;
+    for(auto& linker: linkers)
+    {  
+        r = dot(OmY,dot(OmZ,Minus(linker.second->r(),ctr_mass)));
+        if(pow(r[0]/a,2)+pow(r[1]/b,2)+pow(r[2]/b,2) <= 1)
+        {
+            if(linker.second->is_free()){
+                free_linkers.push_back(linker.second);
+                }
+            else{
+                occ_linkers.push_back(linker.second);
+                }
+        }
+    }
+}
+*/
+
 void LoopLinkWrap::get_in_ellipse(const std::array<double,3>& ctr_mass,
                         const std::array<double,3>& main_ax,
                         double a, double b,

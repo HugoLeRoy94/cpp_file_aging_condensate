@@ -100,7 +100,7 @@ double Dangling::compute_binding_rate(double li, Linker* rlinker) const {
 double Dangling::compute_total_rate(Linker* rlinker) const
 {
   Linker* currentR = (Rleft != nullptr) ? Rleft : Rright;
-  double DIFF(diff(currentR->r(),rlinker->r()));
+  double DIFF(get_square_diff(currentR->r(),rlinker->r()));
   double integral(0);
   for(int i=1; i<ell;i++){integral+=binding_rate_to_integrate(i, DIFF);}
   return integral;

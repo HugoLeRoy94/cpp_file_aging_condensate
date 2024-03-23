@@ -26,7 +26,7 @@ Gillespie::Gillespie(double ell_tot,
     loop_link.create_new_occupied_linker(0.,0.,0.);
     Linker* R0 = loop_link.get_linkers().at({0.,0.,0.});
     Linker* dummy_linker(nullptr);
-    Dangling dummy_dangling(R0,dummy_linker, 0., ell, rho,slide); // dummy dangling that helps generate crosslinkers but has none initially
+    Dangling dummy_dangling(R0,dummy_linker, 0., ell/2, rho,slide); // dummy dangling that helps generate crosslinkers but has none initially
     Strand* dummy_strand(loop_link.Create_Strand(dummy_dangling));
     // ---------------------------------------------------------------------------
     //-----------------------------initialize crosslinkers------------------------
@@ -75,9 +75,6 @@ void Gillespie::compute_cum_rates(vector<double>& cum_rates) const
   if (cum_rates.back() == 0) {
     IF(true) {
       cout << "cumulative rate are 0, let's output the number of linkers in the loops :" << endl; 
-      for(const auto& loop : loop_link.get_strands()) {
-        cout << loop->get_r().size() << endl;
-      }
     }
     throw invalid_argument("cum_rates.back()=0 no available process"); 
   }

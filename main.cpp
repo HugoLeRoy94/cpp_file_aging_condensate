@@ -5,14 +5,14 @@ using namespace std;
 using namespace std::chrono;
 int main(int argc, char* argv[]){
   
-  int t_tot(100000);
+  int t_tot(10000);
   double ell_tot(1000.);
   //double distance_anchor(1000.);
   double rho0(pow(10,-2));
   double BindingEnergy(-15);
   int bind(0.);
   double* R;
-  Gillespie* S = new Gillespie(ell_tot,0.,BindingEnergy,0.1,5984365,false,15,3);
+  Gillespie* S = new Gillespie(ell_tot,0.,BindingEnergy,0.,5984365,false,15,3);
   cout<<"beginning of the simulation"<<endl;
   auto start = high_resolution_clock::now();
   for(int n(0);n<t_tot;n++){
