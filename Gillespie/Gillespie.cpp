@@ -313,7 +313,6 @@ double Gillespie::draw_time(double rate) const
   return cum_Ploop;
 }
 
-
 Strand* Gillespie::select_strand(vector<double>& cum_Ploop)
 {
   // select the loop in which we will create a linker:

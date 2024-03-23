@@ -43,6 +43,7 @@ Loop::Loop(Linker* R0,
   unbound_term = 1.5 * get_square_diff(Rleft->r(), Rright->r()) / ell; // intermediate fastener computation
   IF(true){cout<<"Loop::Constructor : OVER"<<endl;}
 }
+string Loop::whoIam() const{return "loop";}
 
 Loop::Loop(const Loop &loop,
             Linker* new_left_linker,Linker* new_right_linker) : Strand(loop,new_left_linker,new_right_linker)
@@ -159,9 +160,7 @@ double Loop::compute_total_rate(Linker* linker) const
   //double steps = ell;
   //double h = (ell) / (4 * steps); // Divide the interval into steps, each with 4 sub-intervals for Boole's rule
   double integral = 0.0;
-
   double squared_diff_left(get_square_diff(Rleft->r(), linker->r())),squared_diff_right(get_square_diff(linker->r(), Rright->r()));
-
   /*
   for (int i = 0; i < steps; ++i) {
       double x0 = a + 4 * i * h;

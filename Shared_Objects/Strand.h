@@ -65,6 +65,7 @@ class Strand
         // use random_in_ellipse to generate  a number of linkers
         virtual double compute_binding_rate(double li, Linker* rlinker) const =0;
         virtual double compute_total_rate(Linker* rlinker) const =0;
+        virtual std::string whoIam() const=0;
     //friend class LoopLinkWrap;
 };
 #endif

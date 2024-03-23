@@ -2,7 +2,7 @@
 CC = g++
 VERSION = -std=c++23
 OPT = -O3
-DEBUG ?= no
+DEBUG ?= yes
 MEMCHECK = #-g
 FastMath = #-fno-inline#-ffast-math
 

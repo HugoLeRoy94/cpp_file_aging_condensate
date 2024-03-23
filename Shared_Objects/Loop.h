@@ -51,6 +51,6 @@ private:
     return exp(1.5 * log(3 * ell / (2 * Pi * li * (ell - li))) - 1.5 * (squared_diff_left / li + squared_diff_right / (ell - li)) + unbound_term)*1/ell;
   }
   double compute_total_rate(Linker* rlinker) const override;
-  
+  std::string whoIam() const override;  
 };
 #endif

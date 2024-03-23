@@ -3,6 +3,7 @@ using namespace std;
 Dangling::Dangling() : Strand()
 {}
 // dsl : distance sur ell : ratio of the two usefull to know how to adjust the concentration of linkers
+string Dangling::whoIam() const{return "dangling";}
 Dangling::Dangling(Linker* R0,
                   Linker* R1,
                   double ell_0,
@@ -100,9 +101,9 @@ double Dangling::compute_total_rate(Linker* rlinker) const
 {
   Linker* currentR = (Rleft != nullptr) ? Rleft : Rright;
   double DIFF(diff(currentR->r(),rlinker->r()));
-  double tot_rate(3/(2*ell*acos(-1)*DIFF)*( erfc(sqrt(3/(2*ell))*DIFF)));
-
-  return tot_rate;
+  double integral(0);
+  for(int i=1; i<ell;i++){integral+=binding_rate_to_integrate(i, DIFF);}
+  return integral;
 }
 
 pair<unique_ptr<Strand>,unique_ptr<Strand>> Dangling::bind() const

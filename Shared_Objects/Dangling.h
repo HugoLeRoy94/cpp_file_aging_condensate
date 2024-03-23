@@ -34,8 +34,20 @@ private:
   double Omega(double ell) const;
   // use random_in_sphere to generate  a number of linkers
    // build le vector p_linkers from the overall map of the gillespie:
-  double compute_binding_rate(double li, Linker* rlinker) const override;
   double compute_total_rate(Linker* rlinker) const override;
+    double compute_binding_rate(double li, Linker* linker) const override;
+  inline double binding_rate_to_integrate(double li, double squared_diff) const
+  {
+  if (squared_diff > li) {
+        return 0.0;
+    }
+    // Compute the result
+    // OK, I don't understand why there isn't 1/ell that multiply the rate. Thus, I will remove it, but maybe it was correct.
+    // The explanation I gave back then is left intact as well. Understand who can.
+    //double rate = exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * r_li_ratio) ;/// ell; division by ell for binding per unit length, multiplication by ell to account for higher rate of visit of mu-states.
+    return exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * squared_diff/li) /ell;
+  }
   
+  std::string whoIam() const override;
 };
 #endif
