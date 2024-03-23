@@ -1,10 +1,10 @@
 # Variables
 CC = g++
 VERSION = -std=c++23
-OPT = -O0
+OPT = -O3
 DEBUG ?= #yes
-MEMCHECK = -g
-FastMath = -fno-inline#-ffast-math
+MEMCHECK = #-g
+FastMath = #-fno-inline#-ffast-math
 
 # Libraries settings
 LIB_NAMES := Gillespie Monte_Carlo

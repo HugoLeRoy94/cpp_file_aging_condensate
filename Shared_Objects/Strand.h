@@ -42,8 +42,8 @@ class Strand
         // compute the rates
         //void compute_all_rates();
         void compute_total_rates();
-        void compute_cum_rates(std::vector<double>& sum_l_cum_rates, 
-                               std::vector<std::vector<double>>& cum_rates) const;
+        virtual void compute_cum_rates(std::vector<double>& sum_l_cum_rates, 
+                               std::vector<std::vector<double>>& cum_rates) const =0;
 
         void select_link_length(double &length, Linker*& r_selected) const;
         virtual Strand* clone() const = 0;

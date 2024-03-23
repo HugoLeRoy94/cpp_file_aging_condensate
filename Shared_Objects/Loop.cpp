@@ -183,6 +183,44 @@ double Loop::compute_total_rate(Linker* linker) const
     //  total_rates+=compute_binding_rate((double)ELL,rlink);
     //}
 }
+void Loop::compute_cum_rates(vector<double>& sum_l_cum_rates,
+                               vector<vector<double>>& cum_rates) const
+{
+//reserve the correct amount of memory
+sum_l_cum_rates.resize(free_linkers.size());
+cum_rates.resize(free_linkers.size());
+for(auto& cum_rate : cum_rates){cum_rate.resize((int)ell-1);}
+// the entry vectors must be empty
+int rindex(0);
+for (auto &rlink : free_linkers)
+  {
+    // iterate through each linker
+    // and compute a cumulative binding rate vector for each
+    // length and.
+    int ellindex(0);
+    double squared_diff_left(get_square_diff(Rleft->r(), rlink->r())),squared_diff_right(get_square_diff(rlink->r(), Rright->r()));
+    for (int ELL = 1; ELL < (int)ell; ELL++)
+    {
+      // add it to the cumulative vector
+      if (ellindex == 0)
+      {
+        cum_rates[rindex][ellindex] = binding_rate_to_integrate(ELL, squared_diff_left,squared_diff_right);//compute_binding_rate((double)ELL,rlink);
+      }
+      else
+      {
+        cum_rates[rindex][ellindex] = cum_rates[rindex][ellindex-1]+binding_rate_to_integrate(ELL,squared_diff_left,squared_diff_right);//compute_binding_rate((double)ELL,rlink);
+      }
+      ellindex++;
+    }
+    // Add the end of this vector, which is the total probability
+    // to bind to this specific linker to sum_l_cum_rates.
+    if(rindex==0){sum_l_cum_rates[0] = cum_rates[rindex].back();}
+    else{sum_l_cum_rates[rindex] = sum_l_cum_rates[rindex-1]+cum_rates[rindex].back();}
+    // add the whole vector to to cum_rates:
+    rindex++;
+  }
+}
+
 void Loop::Check_integrity() const
 {
   cout<<ell_coordinate_0<<" "<<ell_coordinate_1<<endl;

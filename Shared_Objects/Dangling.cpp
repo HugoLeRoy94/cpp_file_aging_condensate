@@ -97,6 +97,45 @@ double Dangling::compute_binding_rate(double li, Linker* rlinker) const {
     double rate = exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * r_li_ratio) /ell;
     return rate;
 }
+
+void Dangling::compute_cum_rates(vector<double>& sum_l_cum_rates,
+                               vector<vector<double>>& cum_rates) const
+{
+//reserve the correct amount of memory
+sum_l_cum_rates.resize(free_linkers.size());
+cum_rates.resize(free_linkers.size());
+for(auto& cum_rate : cum_rates){cum_rate.resize((int)ell-1);}
+// the entry vectors must be empty
+int rindex(0);
+Linker* currentR = (Rleft != nullptr) ? Rleft : Rright;
+for (auto &rlink : free_linkers)
+  {
+    // iterate through each linker
+    // and compute a cumulative binding rate vector for each
+    // length and.
+    int ellindex(0);
+    double squared_diff(get_square_diff(currentR->r(), rlink->r()));
+    for (int ELL = 1; ELL < (int)ell; ELL++)
+    {
+      // add it to the cumulative vector
+      if (ellindex == 0)
+      {
+        cum_rates[rindex][ellindex] = binding_rate_to_integrate(ELL, squared_diff);//compute_binding_rate((double)ELL,rlink);
+      }
+      else
+      {
+        cum_rates[rindex][ellindex] = cum_rates[rindex][ellindex-1]+binding_rate_to_integrate(ELL,squared_diff);//compute_binding_rate((double)ELL,rlink);
+      }
+      ellindex++;
+    }
+    // Add the end of this vector, which is the total probability
+    // to bind to this specific linker to sum_l_cum_rates.
+    if(rindex==0){sum_l_cum_rates[0] = cum_rates[rindex].back();}
+    else{sum_l_cum_rates[rindex] = sum_l_cum_rates[rindex-1]+cum_rates[rindex].back();}
+    // add the whole vector to to cum_rates:
+    rindex++;
+  }
+}
 double Dangling::compute_total_rate(Linker* rlinker) const
 {
   Linker* currentR = (Rleft != nullptr) ? Rleft : Rright;

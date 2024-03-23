@@ -91,50 +91,6 @@ void Strand::compute_total_rates()
   }
 }
 
-void Strand::compute_cum_rates(vector<double>& sum_l_cum_rates,
-                               vector<vector<double>>& cum_rates) const
-{
-  //cout<<"start computing cum_rates"<<endl;
-  //cout<<free_linkers.size()<<endl;
-  //cout<<ell<<endl;
-//reserve the correct amount of memory
-sum_l_cum_rates.resize(free_linkers.size());
-cum_rates.resize(free_linkers.size());
-for(auto& cum_rate : cum_rates){cum_rate.resize((int)ell-1);}
-// the entry vectors must be empty
-int rindex(0);
-//cout<<"ok cum_rates size correct"<<endl;
-for (auto &rlink : free_linkers)
-  {
-    // iterate through each linker
-    // and compute a cumulative binding rate vector for each
-    // length and.
-    int ellindex(0);
-    for (int ELL = 1; ELL < (int)ell; ELL++)
-    {
-      // add it to the cumulative vector
-      if (ellindex == 0)
-      {
-        cum_rates[rindex][ellindex] = compute_binding_rate((double)ELL,rlink);
-      }
-      else
-      {
-        cum_rates[rindex][ellindex] = cum_rates[rindex][ellindex-1]+compute_binding_rate((double)ELL,rlink);
-      }
-      ellindex++;
-    }
-    // Add the end of this vector, which is the total probability
-    // to bind to this specific linker to sum_l_cum_rates.
-    //for(int i =0;i<cum_rates.size();i++){cout<<cum_rates[i].size()<<endl<<endl;
-    //for(int j=0;j<cum_rates[i].size();j++){cout<<cum_rates[i][j]<<endl;}}
-    if(rindex==0){sum_l_cum_rates[0] = cum_rates[rindex].back();}
-    else{sum_l_cum_rates[rindex] = sum_l_cum_rates[rindex-1]+cum_rates[rindex].back();}
-    // add the whole vector to to cum_rates:
-    rindex++;
-  }
-  //cout<<"cum_rate"<<endl;
-  //for(auto& rate : cum_rates){for(auto& r : rate){cout<<r<<endl;}}
-}
 
 void Strand::select_link_length(double &length, Linker*& r_selected) const
 {

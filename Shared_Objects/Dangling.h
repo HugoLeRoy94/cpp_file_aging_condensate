@@ -36,6 +36,8 @@ private:
    // build le vector p_linkers from the overall map of the gillespie:
   double compute_total_rate(Linker* rlinker) const override;
     double compute_binding_rate(double li, Linker* linker) const override;
+    void compute_cum_rates(std::vector<double>& sum_l_cum_rates,
+                               std::vector<std::vector<double>>& cum_rates) const override;
   inline double binding_rate_to_integrate(double li, double squared_diff) const
   {
   if (squared_diff > li) {
