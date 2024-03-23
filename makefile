@@ -4,6 +4,7 @@ VERSION = -std=c++23
 OPT = -O3
 DEBUG ?= no
 MEMCHECK = #-g
+FastMath = #-fno-inline#-ffast-math
 
 # Libraries settings
 LIB_NAMES := Gillespie Monte_Carlo
@@ -34,7 +35,7 @@ all: $(LIB_SO)
 
 # Compile each cpp file to a .o file
 %.o: %.cpp $(LIB_HEADERS)
-	$(CC) $(VERSION) -fPIC $(OPT) -c $< -o $@ $(FLAG) $(MEMCHECK)
+	$(CC) $(VERSION) -fPIC $(OPT) $(FastMath) -c $< -o $@ $(FLAG) $(MEMCHECK)
 
 # Link all the .o files into a shared object file
 Gillespie.so:$(LIB_OBJSGIL)

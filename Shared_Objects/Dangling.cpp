@@ -90,8 +90,19 @@ double Dangling::compute_binding_rate(double li, Linker* rlinker) const {
         return 0.0;
     }
     // Compute the result
-    double rate = exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * r_li_ratio) ;/// ell; division by ell for binding per unit length, multiplication by ell to account for higher rate of visit of mu-states.
+    // OK, I don't understand why there isn't 1/ell that multiply the rate. Thus, I will remove it, but maybe it was correct.
+    // The explanation I gave back then is left intact as well. Understand who can.
+    //double rate = exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * r_li_ratio) ;/// ell; division by ell for binding per unit length, multiplication by ell to account for higher rate of visit of mu-states.
+    double rate = exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * r_li_ratio) /ell;
     return rate;
+}
+double Dangling::compute_total_rate(Linker* rlinker) const
+{
+  Linker* currentR = (Rleft != nullptr) ? Rleft : Rright;
+  double DIFF(diff(currentR->r(),rlinker->r()));
+  double tot_rate(3/(2*ell*acos(-1)*DIFF)*( erfc(sqrt(3/(2*ell))*DIFF)));
+
+  return tot_rate;
 }
 
 pair<unique_ptr<Strand>,unique_ptr<Strand>> Dangling::bind() const

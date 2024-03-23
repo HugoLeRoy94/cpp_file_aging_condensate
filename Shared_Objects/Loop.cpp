@@ -152,11 +152,37 @@ unique_ptr<Strand> Loop::do_slide(double dl,bool right) const
     return make_unique<Loop>(Rleft,Rright,ell_coordinate_0+dl,ell_coordinate_1,rho0,slide);
   }
 }
-double Loop::compute_binding_rate(double li, Linker* linker) const
+
+
+double Loop::compute_total_rate(Linker* linker) const
 {
-  if(diff(Rleft->r(), linker->r())>li or diff(linker->r(), Rright->r())>ell - li)
-  {return 0.;}
-  return exp(1.5 * log(3 * ell / (2 * Pi * li * (ell - li))) - 1.5 * (get_square_diff(Rleft->r(), linker->r()) / li + get_square_diff(linker->r(), Rright->r()) / (ell - li)) + unbound_term);//*1/ell;
+  //double steps = ell;
+  //double h = (ell) / (4 * steps); // Divide the interval into steps, each with 4 sub-intervals for Boole's rule
+  double integral = 0.0;
+
+  double squared_diff_left(get_square_diff(Rleft->r(), linker->r())),squared_diff_right(get_square_diff(linker->r(), Rright->r()));
+
+  /*
+  for (int i = 0; i < steps; ++i) {
+      double x0 = a + 4 * i * h;
+      double x1 = x0 + h;
+      double x2 = x1 + h;
+      double x3 = x2 + h;
+      double x4 = x3 + h;
+
+      integral += (2 * h / 45) * (7 * binding_rate_to_integrate(x0, squared_diff_left,squared_diff_right) +
+                                  32 * binding_rate_to_integrate(x1, squared_diff_left,squared_diff_right) +
+                                  12 * binding_rate_to_integrate(x2, squared_diff_left,squared_diff_right) +
+                                  32 * binding_rate_to_integrate(x3, squared_diff_left,squared_diff_right) +
+                                  7 * binding_rate_to_integrate(x4, squared_diff_left,squared_diff_right));
+  }
+*/
+  for(int i=1; i<ell;i++){integral+=binding_rate_to_integrate(i, squared_diff_left,squared_diff_right);}
+  return integral;
+      //for (int ELL = 1; ELL < (int)ell; ELL++)
+    //{
+    //  total_rates+=compute_binding_rate((double)ELL,rlink);
+    //}
 }
 void Loop::Check_integrity() const
 {

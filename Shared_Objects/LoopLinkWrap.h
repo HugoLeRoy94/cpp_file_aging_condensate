@@ -8,8 +8,8 @@ class LoopLinkWrap
         std::set<Strand*,LessLoop> strands;
         int Nfree_linker;
         void set_p_linkers(Strand* newly_created_strand);        
-        void get_in_ellipse(    std::array<double,3> ctr_mass,
-                                std::array<double,3> main_ax,
+        void get_in_ellipse(   const  std::array<double,3>& ctr_mass,
+                                const std::array<double,3>& main_ax,
                                 double a,
                                 double b,
                                 std::vector<Linker*>& free_linkers,

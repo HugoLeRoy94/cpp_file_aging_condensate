@@ -35,6 +35,7 @@ private:
   // use random_in_sphere to generate  a number of linkers
    // build le vector p_linkers from the overall map of the gillespie:
   double compute_binding_rate(double li, Linker* rlinker) const override;
+  double compute_total_rate(Linker* rlinker) const override;
   
 };
 #endif

@@ -200,34 +200,65 @@ void LoopLinkWrap::delete_pointers()
     delete_linkers();
 }
 
-void LoopLinkWrap::get_in_ellipse(  std::array<double,3> ctr_mass,
-                                    std::array<double,3> main_ax,
-                                    double a,
-                                    double b,
-                                    std::vector<Linker*>& free_linkers,
-                                    std::vector<Linker*>& occ_linkers)const
-{
-    double theta = atan2(main_ax[1],main_ax[0]);
-    array<array<double,3>,3> OmZ(OmegaZ(-theta));
-    double phi = atan2(sqrt(pow(main_ax[0],2)+pow(main_ax[1],2)),main_ax[2])-acos(-1)/2;
-    array<array<double,3>,3> OmY(OmegaY(-phi));
+//void LoopLinkWrap::get_in_ellipse(  std::array<double,3> ctr_mass,
+//                                    std::array<double,3> main_ax,
+//                                    double a,
+//                                    double b,
+//                                    std::vector<Linker*>& free_linkers,
+//                                    std::vector<Linker*>& occ_linkers)const
+//{
+//    double theta = atan2(main_ax[1],main_ax[0]);
+//    array<array<double,3>,3> OmZ(OmegaZ(-theta));
+//    double phi = atan2(sqrt(pow(main_ax[0],2)+pow(main_ax[1],2)),main_ax[2])-acos(-1)/2;
+//    array<array<double,3>,3> OmY(OmegaY(-phi));
+//
+//    
+//    array<double,3> r;
+//    for(auto& linker: linkers)
+//    {  
+//        r = dot(OmY,dot(OmZ,Minus(linker.second->r(),ctr_mass)));
+//        if(pow(r[0]/a,2)+pow(r[1]/b,2)+pow(r[2]/b,2) <= 1)
+//        {
+//            if(linker.second->is_free()){
+//                free_linkers.push_back(linker.second);
+//                }
+//            else{
+//                occ_linkers.push_back(linker.second);
+//                }
+//        }
+//    }
+//}
+void LoopLinkWrap::get_in_ellipse(const std::array<double,3>& ctr_mass,
+                        const std::array<double,3>& main_ax,
+                        double a, double b,
+                        std::vector<Linker*>& free_linkers,
+                        std::vector<Linker*>& occ_linkers) const
+    {
+        const double pi = 3.141592653589793;
+        double theta = atan2(main_ax[1], main_ax[0]);
+        auto OmZ = OmegaZ(-theta);
+        double phi = atan2(sqrt(main_ax[0] * main_ax[0] + main_ax[1] * main_ax[1]), main_ax[2]) - pi / 2;
+        auto OmY = OmegaY(-phi);
+        auto Om_tot (dot(OmY,OmZ));
+        // Precompute squares of semi-axes to use in comparison
+        double a_squared = a * a;
+        double b_squared = b * b;
 
-    
-    array<double,3> r;
-    for(auto& linker: linkers)
-    {  
-        r = dot(OmY,dot(OmZ,Minus(linker.second->r(),ctr_mass)));
-        if(pow(r[0]/a,2)+pow(r[1]/b,2)+pow(r[2]/b,2) <= 1)
-        {
-            if(linker.second->is_free()){
-                free_linkers.push_back(linker.second);
+        for (auto& linker : linkers) { // Assuming 'linkers' is accessible
+            //auto r = dot(OmY, dot(OmZ, Minus(linker.second->r(), ctr_mass)));
+            auto r(dot(Om_tot,Minus(linker.second->r(), ctr_mass)));
+            // Compare squares to avoid sqrt; no need for pow for squaring
+            if (r[0] * r[0] / a_squared + r[1] * r[1] / b_squared + r[2] * r[2] / b_squared <= 1) {
+                if (linker.second->is_free()) {
+                    free_linkers.push_back(linker.second);
+                } else {
+                    occ_linkers.push_back(linker.second);
                 }
-            else{
-                occ_linkers.push_back(linker.second);
-                }
+            }
         }
     }
-}
+    // Definitions of OmegaZ, OmegaY, dot, and Minus would be here or elsewhere
+//};
 
 void LoopLinkWrap::remake_strands(set<Strand*,LessLoop> to_remake)
 {

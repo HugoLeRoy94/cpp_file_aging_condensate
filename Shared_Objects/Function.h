@@ -4,19 +4,75 @@ extern double Pi;
 //extern std::default_random_engine generator;
 extern std::mt19937 generator;
 extern std::array<double,3> anchor;
-double get_square_diff(std::array<double,3> v1,std::array<double,3> v2);
-double diff(std::array<double,3> v1,std::array<double,3> v2);
-
+//double get_square_diff(std::array<double,3> v1,std::array<double,3> v2);
+//double diff(std::array<double,3> v1,std::array<double,3> v2);
+inline double get_square_diff(const std::array<double,3>& v1, const std::array<double,3>& v2) {
+    double res = 0.0f;
+    for (int n = 0; n < 3; ++n) {
+        double diff = v1[n] - v2[n];
+        res += diff * diff;
+    }
+    return res;
+}
+inline double diff(const std::array<double,3>& v1, const std::array<double,3>& v2) {
+    double res = 0.0f;
+    for (int n = 0; n < 3; ++n) {
+        double diff = v1[n] - v2[n];
+        res += diff * diff;
+    }
+    return std::sqrt(res);
+}
 void sph2cart(double r, double theta, double phi, double& x, double& y, double& z);
 void cart2sph(double x, double y, double z, double& r, double& theta, double& phi);
+inline std::array<double,3> dot(const std::array<std::array<double,3>,3>& Matrice,const std::array<double,3>& vect)
+{
+  std::array<double,3> res({0.,0.,0.});
+  for(int i =0; i<3;i++)
+  {
+    for(int j=0;j<3;j++)
+    {
+      res[i] += Matrice[i][j] * vect[j];
+    }
+  }
+  return res;
+}
+inline std::array<std::array<double,3>,3> dot(const std::array<std::array<double,3>,3>& Matrice1,const std::array<std::array<double,3>,3>& Matrice2)
+{
+std::array<std::array<double, 3>, 3> res = {std::array<double, 3>{0., 0., 0.},
+                                            std::array<double, 3>{0., 0., 0.},
+                                            std::array<double, 3>{0., 0., 0.}};
 
-std::array<double,3> dot(std::array<std::array<double,3>,3> Matrice,std::array<double,3> vect);
+  for(int i =0; i<3;i++)
+  {
+    for(int j=0;j<3;j++)
+    {
+      for(int k=0;k<3;k++)
+      {
+        res[i][j] += Matrice1[i][k] * Matrice2[k][j];
+      }
+    }
+  }
+  return res;
+}
+//std::array<double,3> dot(std::array<std::array<double,3>,3> Matrice,std::array<double,3> vect);
 std::array<std::array<double,3>,3> OmegaY(double theta);
 std::array<std::array<double,3>,3> OmegaZ(double theta);
 double norm(std::array<double,3> u);
 std::array<std::array<double,3>,3> ax_from_main_ax(std::array<double,3> u,double a,double b);
-std::array<double,3> Plus(std::array<double,3> a, std::array<double,3> b);
-std::array<double,3> Minus(std::array<double,3> a, std::array<double,3> b);
+//std::array<double,3> Plus(std::array<double,3> a, std::array<double,3> b);
+//std::array<double,3> Minus(std::array<double,3> a, std::array<double,3> b);
+inline std::array<double,3> Plus(std::array<double,3> a, std::array<double,3> b)
+{
+  std::array<double,3> res({0.,0.,0.});
+  for(int i =0;i<3;i++){res[i] = a[i]+b[i];}
+  return res;
+}
+inline std::array<double,3> Minus(std::array<double,3> a, std::array<double,3> b)
+{
+  std::array<double,3> res({0.,0.,0.});
+  for(int i =0;i<3;i++){res[i] = a[i]-b[i];}
+  return res;
+}
 void generate_point_in_ellipse(std::array<double,3> main_ax,
                                std::array<double,3> ctr_mass,
                                double a, 

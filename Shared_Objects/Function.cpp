@@ -4,32 +4,32 @@ double Pi = acos(-1);
 //default_random_engine generator;
 mt19937 generator;
 array<double,3> anchor;
-double get_square_diff(array<double,3> v1,array<double,3> v2){
-  double res(0);
-  for(int n=0;n<3;n++){
-    res+=pow(v1[n]-v2[n],2);
-  }
-  return res;
-}
-double diff(array<double,3> v1,array<double,3> v2){
-  double res(0);
-  for(int n=0;n<3;n++){
-    res+=pow(v1[n]-v2[n],2);
-  }
-  return sqrt(res);
-}
-array<double,3> dot(array<array<double,3>,3> Matrice,array<double,3> vect)
-{
-  array<double,3> res({0.,0.,0.});
-  for(int i =0; i<3;i++)
-  {
-    for(int j=0;j<3;j++)
-    {
-      res[i] += Matrice[i][j] * vect[j];
-    }
-  }
-  return res;
-}
+//double get_square_diff(array<double,3> v1,array<double,3> v2){
+//  double res(0);
+//  for(int n=0;n<3;n++){
+//    res+=pow(v1[n]-v2[n],2);
+//  }
+//  return res;
+//}
+//double diff(array<double,3> v1,array<double,3> v2){
+//  double res(0);
+//  for(int n=0;n<3;n++){
+//    res+=pow(v1[n]-v2[n],2);
+//  }
+//  return sqrt(res);
+//}
+//array<double,3> dot(array<array<double,3>,3> Matrice,array<double,3> vect)
+//{
+//  array<double,3> res({0.,0.,0.});
+//  for(int i =0; i<3;i++)
+//  {
+//    for(int j=0;j<3;j++)
+//    {
+//      res[i] += Matrice[i][j] * vect[j];
+//    }
+//  }
+//  return res;
+//}
 array<array<double,3>,3> OmegaY(double theta)
 {
   array<array<double,3>,3> res;
@@ -81,18 +81,7 @@ array<array<double,3>,3> ax_from_main_ax(array<double,3> u,double a,double b)
   }
   return {u,v,w};
 }
-array<double,3> Plus(array<double,3> a, array<double,3> b)
-{
-  array<double,3> res({0.,0.,0.});
-  for(int i =0;i<3;i++){res[i] = a[i]+b[i];}
-  return res;
-}
-array<double,3> Minus(array<double,3> a, array<double,3> b)
-{
-  array<double,3> res({0.,0.,0.});
-  for(int i =0;i<3;i++){res[i] = a[i]-b[i];}
-  return res;
-}
+
 void generate_point_in_ellipse( array<double,3> main_ax,
                                 array<double,3> ctr_mass,
                                 double a, 
@@ -129,7 +118,7 @@ void generate_point_in_ellipse( array<double,3> main_ax,
     y = r*sin(theta)*sin(phi);
     z = r*cos(theta);
 
-    res.insert(Plus(ctr_mass,dot(OmZ,dot(OmY,dot(axes,{x,y,z})))));
+    res.insert(Plus(ctr_mass,dot(OmZ,dot(OmY,dot(axes,std::array<double, 3>{x,y,z})))));
   }
   //ofstream file;
   //file.open("trash.txt",std::ios::app);

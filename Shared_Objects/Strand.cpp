@@ -83,10 +83,11 @@ void Strand::compute_total_rates()
   total_rates = 0.;
   for (auto &rlink : free_linkers) // iterate through every linkers
   {
-    for (int ELL = 1; ELL < (int)ell; ELL++)
-    {
-      total_rates+=compute_binding_rate((double)ELL,rlink);
-    }
+    //for (int ELL = 1; ELL < (int)ell; ELL++)
+    //{
+    //  total_rates+=compute_binding_rate((double)ELL,rlink);
+    //}
+    total_rates+=compute_total_rate(rlink);
   }
 }
 
