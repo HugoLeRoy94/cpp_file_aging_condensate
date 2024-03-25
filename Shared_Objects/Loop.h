@@ -43,12 +43,12 @@ private:
     if(diff(Rleft->r(), linker->r())>li or diff(linker->r(), Rright->r())>ell - li)
     {return 0.;}
     // I added a 1/ell, see dangling class for more precision, but it seems that I thought that I was unecessary at some point.
-    return exp(1.5 * log(3 * ell / (2 * Pi * li * (ell - li))) - 1.5 * (get_square_diff(Rleft->r(), linker->r()) / li + get_square_diff(linker->r(), Rright->r()) / (ell - li)) + unbound_term)*1/ell;
+    return exp(1.5 * log(3 * ell / (2 * Pi * li * (ell - li))) - 1.5 * (get_square_diff(Rleft->r(), linker->r()) / li + get_square_diff(linker->r(), Rright->r()) / (ell - li)) + unbound_term);//*1/ell;
   }
   inline double binding_rate_to_integrate(double li, double squared_diff_left,double squared_diff_right) const
   {
     if (squared_diff_left > li*li or squared_diff_right > (ell-li)*(ell-li)){return 0.;}
-    return exp(1.5 * log(3 * ell / (2 * Pi * li * (ell - li))) - 1.5 * (squared_diff_left / li + squared_diff_right / (ell - li)) + unbound_term)*1/ell;
+    return exp(1.5 * log(3 * ell / (2 * Pi * li * (ell - li))) - 1.5 * (squared_diff_left / li + squared_diff_right / (ell - li)) + unbound_term);//*1/ell;
   }
   double compute_total_rate(Linker* rlinker) const override;
   void compute_cum_rates(std::vector<double>& sum_l_cum_rates,
