@@ -47,7 +47,7 @@ private:
     // OK, I don't understand why there isn't 1/ell that multiply the rate. Thus, I will remove it, but maybe it was correct.
     // The explanation I gave back then is left intact as well. Understand who can.
     //double rate = exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * r_li_ratio) ;/// ell; division by ell for binding per unit length, multiplication by ell to account for higher rate of visit of mu-states.
-    return exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * squared_diff/li);// /ell;
+    return exp(1.5 * log(1.5 / (Pi * li)) - 1.5 * squared_diff/li) /ell;
   }
   
   std::string whoIam() const override;
